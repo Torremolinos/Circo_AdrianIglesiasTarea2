@@ -27,45 +27,45 @@ El objetivo es aplicar los contenidos de Acceso a Datos y diseñar un sistema mo
 
 📁 Estructura del proyecto
 
-Circo_AdrianIglesiasTarea2/
+📦 Circo_AdrianIglesiasTarea2/
 
-pom.xml
+📄 pom.xml
 
-README.md
+📄 README.md
 
-.gitignore
+📄 .gitignore
 
-src/
+📂 src/
 
-main/
+📂 main/
 
-java/
+📂 java/
 
-controller/
-Control del flujo interno
+📂 controller/
+Control interno del flujo
 
-dao/
-Acceso a datos (ficheros, XML, SQL)
+📂 dao/
+Acceso a datos: ficheros, XML, SQL (JDBC)
 
-entidades/
-Clases del dominio (Espectaculo, Artista, Coordinacion…)
+📂 entidades/
+Modelo del dominio (Espectaculo, Artista, Coordinacion…)
 
-fachada/
-Casos de uso entre vista y servicios
+📂 fachada/
+Casos de uso (Vista → Fachada → Servicios)
 
-service/
-Lógica de negocio
+📂 service/
+Lógica de negocio del sistema
 
-utils/
-Funciones y utilidades comunes
+📂 utils/
+Funciones auxiliares y utilidades
 
-views/
+📂 views/
 Menús y vistas de consola
 
-resources/
+📂 resources/
 
-circo_adrianiglesias.sql
-Script SQL del proyecto
+🗃️ circo_adrianiglesias.sql
+Script SQL de creación e inserción de datos
 
-target/
-(generado por Maven, ignorado por Git)
+📂 target/
+(generado automáticamente por Maven; ignorado por Git)
