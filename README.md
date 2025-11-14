@@ -25,54 +25,47 @@ El objetivo es aplicar los contenidos de Acceso a Datos y diseñar un sistema mo
 
 ## 🧱 Estructura del proyecto
 
-📦 Circo_AdrianIglesiasTarea2
-├── 📂 src
-│   └── 📂 main
-│       ├── 📂 java
-│       │   ├── 📂 controller
-│       │   │   └── Control básico del flujo y coordinación interna
-│       │   │
-│       │   ├── 📂 dao
-│       │   │   └── Acceso a datos:
-│       │   │       • Ficheros de texto
-│       │   │       • Lectura XML
-│       │   │       • Conexión SQL (JDBC)
-│       │   │
-│       │   ├── 📂 entidades
-│       │   │   └── Clases del dominio:
-│       │   │       • Persona
-│       │   │       • Artista
-│       │   │       • Coordinacion
-│       │   │       • Espectaculo
-│       │   │       • Numero
-│       │   │
-│       │   ├── 📂 fachada
-│       │   │   └── Casos de uso del sistema
-│       │   │       (Vista → Fachada → Servicios)
-│       │   │
-│       │   ├── 📂 service
-│       │   │   └── Lógica de negocio:
-│       │   │       • Gestión de espectáculos
-│       │   │       • Gestión de artistas
-│       │   │       • Gestión de coordinación
-│       │   │
-│       │   ├── 📂 utils
-│       │   │   └── Utilidades generales:
-│       │   │       • Fechas
-│       │   │       • Lectura segura
-│       │   │       • Validaciones
-│       │   │
-│       │   └── 📂 views
-│       │       └── Vistas y menús de consola:
-│       │           • Menú Invitado
-│       │           • Menú Artista
-│       │           • Menú Coordinación
-│       │           • Menú Administrador
-│       │
-│       └── 📂 resources
-│           ├── 📄 circo_adrianiglesias.sql   # Script SQL completo del proyecto
-│           └── (otros recursos opcionales)
-│
-├── 📄 pom.xml           # Configuración Maven
-├── 📄 README.md         # Documentación del proyecto
-└── 📄 .gitignore        # Exclusiones de Git
+📁 Estructura del proyecto
+
+Circo_AdrianIglesiasTarea2/
+
+pom.xml
+
+README.md
+
+.gitignore
+
+src/
+
+main/
+
+java/
+
+controller/
+Control del flujo interno
+
+dao/
+Acceso a datos (ficheros, XML, SQL)
+
+entidades/
+Clases del dominio (Espectaculo, Artista, Coordinacion…)
+
+fachada/
+Casos de uso entre vista y servicios
+
+service/
+Lógica de negocio
+
+utils/
+Funciones y utilidades comunes
+
+views/
+Menús y vistas de consola
+
+resources/
+
+circo_adrianiglesias.sql
+Script SQL del proyecto
+
+target/
+(generado por Maven, ignorado por Git)
