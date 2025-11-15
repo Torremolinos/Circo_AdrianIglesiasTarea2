@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-	private static DatabaseConnection datanaseConnection;
+	private static DatabaseConnection databaseConnection;
 	private Connection connection;
 	private static Config config = new Config();
 	private static final String URL = config.getProperty("url");
@@ -31,9 +31,13 @@ public class DatabaseConnection {
 	}
 	
 	public static DatabaseConnection getInstance() {
-		if(null == datanaseConnection) {
-			datanaseConnection = new DatabaseConnection();
+		if(null == databaseConnection) {
+			databaseConnection = new DatabaseConnection();
 		}
-		return datanaseConnection;
+		return databaseConnection;
+	}
+	
+	public Connection getConnection() {
+		return connection;
 	}
 }

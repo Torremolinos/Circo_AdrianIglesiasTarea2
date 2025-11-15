@@ -10,6 +10,18 @@ package dao;
 public class CredencialesDAO {
 
 	
+	public void buscarUsuario() {
+		
+	}
+	
+	public void buscarPassword() {
+		
+	}
+	
+	public void buscarUsuarioyPassword() {
+		
+	}
+	
 	
 	
 }
