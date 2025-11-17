@@ -87,37 +87,6 @@ public class CredencialesService {
 		return null;
 	}
 	
-	/**
-	 * Buscamos en credenciales.txt la parte dle id, recorremos todo el fichero 
-	 * pisando una y otra vez la variabla ultimoId, hasta que lleguemos a la ultima
-	 * guardando el ultimo valor.
-	 * @param ruta
-	 * @return
-	 */
-
-	private static long obtenerUltimoId(String ruta) {
-		long ultimoId = 0;
-		try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
-			String linea;
-			while ((linea = br.readLine()) != null) {
-				if (linea.trim().isEmpty())
-					continue;
-				String[] partes = linea.split("\\|");
-				if (partes.length > 0) {
-					try {
-						ultimoId = Long.parseLong(partes[0]);
-					} catch (NumberFormatException e) {
-						System.out.println(
-								"⚠ Se encontró un ID con formato inválido en el fichero. Se omitirá esa línea.");
-						continue;
-					}
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error leyendo IDs: " + e.getMessage());
-		}
-		return ultimoId;
-	}
 	
 	/**
 	 * Creo un objeto de la clase Credencial, comprobando antes que todos los valores
