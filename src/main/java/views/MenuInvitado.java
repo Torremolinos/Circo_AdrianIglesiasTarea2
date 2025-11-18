@@ -9,12 +9,14 @@ package views;
 
 import java.util.Scanner;
 
+import entidades.Perfiles;
+
 public class MenuInvitado {
 
 	private final Scanner sc = new Scanner(System.in);
 
-	public int menuInvitado(String perfil) {
-		System.out.println("Bienvenido " + perfil);
+	public int menuInvitado(Perfiles perfiles) {
+		System.out.println("Bienvenido " + perfiles);
 		System.out.println("🎪 Te damos la bienvenida a nuestro Circo 🎪 ");
 		System.out.println("1.Iniciar sesión");
 		System.out.println("2.Ver espectáculos");
@@ -46,7 +48,8 @@ public class MenuInvitado {
 		do {
 			System.out.println("¿Seguro que quieres salir? (S/N)");
 			respuestaUsuario = sc.nextLine().trim().toLowerCase();
-			esValido = respuestaUsuario.equals("s") || respuestaUsuario.equals("n");
+			esValido = respuestaUsuario.equals("s")
+							|| respuestaUsuario.equals("n");
 
 			if (!esValido) {
 				System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
@@ -61,9 +64,10 @@ public class MenuInvitado {
 		System.out.println("❌ Usuario o contraseña incorrectos.");
 	}
 
-	public void mostrarMensajeSesionIniciada(String perfil) {
-		System.out.println("✅ Sesión iniciada como " + perfil);
+	public void mostrarMensajeSesionIniciada(Perfiles perfiles) {
+		System.out.println("✅ Sesión iniciada como " + perfiles);
 	}
+
 	public void mostrarMensajeErrorOpcion() {
 		System.out.println("⚠️ Opción no válida. Elige de 1 a 3.");
 	}

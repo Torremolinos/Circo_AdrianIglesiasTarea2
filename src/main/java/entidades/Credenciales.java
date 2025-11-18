@@ -12,6 +12,7 @@ public class Credenciales {
 	private Long id;
 	private String nombre;
 	private String password;
+	private Long id_persona;
 	private Perfiles perfil;
 
 	public Credenciales() {
@@ -19,12 +20,21 @@ public class Credenciales {
 	}
 
 	public Credenciales(Long id, String nombre, String password,
-			Perfiles perfil) {
+					Long id_persona, Perfiles perfil) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.password = password;
+		this.id_persona = id_persona;
 		this.perfil = perfil;
+	}
+
+	public Long getId_persona() {
+		return id_persona;
+	}
+
+	public void setId_persona(Long id_persona) {
+		this.id_persona = id_persona;
 	}
 
 	public Long getId() {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-11-2025 a las 02:20:37
+-- Tiempo de generación: 18-11-2025 a las 18:28:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,19 +28,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `artista` (
-  `idart` int(11) NOT NULL,
-  `apodo` varchar(25) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `artista_especialidad`
---
-
-CREATE TABLE `artista_especialidad` (
-  `idart` int(11) NOT NULL,
-  `id_especialidades` int(11) NOT NULL
+  `id` int(11) NOT NULL,
+  `apodo` varchar(25) NOT NULL,
+  `id_persona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -52,7 +42,8 @@ CREATE TABLE `artista_especialidad` (
 CREATE TABLE `coordinacion` (
   `id` int(11) NOT NULL,
   `senior` tinyint(1) NOT NULL,
-  `fechasenior` date NOT NULL
+  `fechasenior` date NOT NULL,
+  `id_persona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -65,19 +56,7 @@ CREATE TABLE `credenciales` (
   `id` int(11) NOT NULL,
   `nombre` varchar(25) NOT NULL,
   `password` varchar(40) NOT NULL,
-  `id_perfil` int(11) NOT NULL,
   `id_persona` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `especialidad`
---
-
-CREATE TABLE `especialidad` (
-  `id_especialidad` int(11) NOT NULL,
-  `nombre` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -111,12 +90,12 @@ CREATE TABLE `numero` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `perfiles`
+-- Estructura de tabla para la tabla `participa`
 --
 
-CREATE TABLE `perfiles` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(25) NOT NULL
+CREATE TABLE `participa` (
+  `idArt` int(11) NOT NULL,
+  `idNumero` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -140,45 +119,45 @@ CREATE TABLE `persona` (
 -- Indices de la tabla `artista`
 --
 ALTER TABLE `artista`
-  ADD PRIMARY KEY (`idart`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_persona_fk_artista` (`id_persona`);
 
 --
 -- Indices de la tabla `coordinacion`
 --
 ALTER TABLE `coordinacion`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_persona_fk_coordinacion` (`id_persona`);
 
 --
 -- Indices de la tabla `credenciales`
 --
 ALTER TABLE `credenciales`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_credenciales_nombre` (`nombre`);
-
---
--- Indices de la tabla `especialidad`
---
-ALTER TABLE `especialidad`
-  ADD PRIMARY KEY (`id_especialidad`);
+  ADD UNIQUE KEY `uq_credenciales_nombre` (`nombre`),
+  ADD KEY `persona_fk` (`id_persona`);
 
 --
 -- Indices de la tabla `espectaculo`
 --
 ALTER TABLE `espectaculo`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nombreespectaculo` (`nombre`);
+  ADD UNIQUE KEY `nombreespectaculo` (`nombre`),
+  ADD KEY `coordinador_fk_id` (`id_coordinacion`);
 
 --
 -- Indices de la tabla `numero`
 --
 ALTER TABLE `numero`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `espectaculo_fk_id` (`id_espectaculo`);
 
 --
--- Indices de la tabla `perfiles`
+-- Indices de la tabla `participa`
 --
-ALTER TABLE `perfiles`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `participa`
+  ADD KEY `id_artista_fk` (`idArt`),
+  ADD KEY `id_numero_fk` (`idNumero`);
 
 --
 -- Indices de la tabla `persona`
@@ -196,7 +175,7 @@ ALTER TABLE `persona`
 -- AUTO_INCREMENT de la tabla `artista`
 --
 ALTER TABLE `artista`
-  MODIFY `idart` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `coordinacion`
@@ -211,12 +190,6 @@ ALTER TABLE `credenciales`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `especialidad`
---
-ALTER TABLE `especialidad`
-  MODIFY `id_especialidad` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `espectaculo`
 --
 ALTER TABLE `espectaculo`
@@ -229,16 +202,45 @@ ALTER TABLE `numero`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `perfiles`
---
-ALTER TABLE `perfiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `coordinacion`
+--
+ALTER TABLE `coordinacion`
+  ADD CONSTRAINT `id_persona_fk_coordinacion` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `credenciales`
+--
+ALTER TABLE `credenciales`
+  ADD CONSTRAINT `persona_fk` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`);
+
+--
+-- Filtros para la tabla `espectaculo`
+--
+ALTER TABLE `espectaculo`
+  ADD CONSTRAINT `coordinador_fk_id` FOREIGN KEY (`id_coordinacion`) REFERENCES `coordinacion` (`id`);
+
+--
+-- Filtros para la tabla `numero`
+--
+ALTER TABLE `numero`
+  ADD CONSTRAINT `espectaculo_fk_id` FOREIGN KEY (`id_espectaculo`) REFERENCES `espectaculo` (`id`);
+
+--
+-- Filtros para la tabla `participa`
+--
+ALTER TABLE `participa`
+  ADD CONSTRAINT `id_artista_fk` FOREIGN KEY (`idArt`) REFERENCES `artista` (`id`),
+  ADD CONSTRAINT `id_numero_fk` FOREIGN KEY (`idNumero`) REFERENCES `numero` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

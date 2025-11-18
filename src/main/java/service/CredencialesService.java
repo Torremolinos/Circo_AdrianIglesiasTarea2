@@ -17,42 +17,32 @@ import java.sql.Date;
 import java.util.Map;
 import java.util.Scanner;
 
+import dto.LoginDto;
 import entidades.Credenciales;
 import entidades.Especialidades;
 import entidades.Perfiles;
 import utils.Config;
 import utils.Utilidades;
 
-
-
 public class CredencialesService {
 
 	static Config config = new Config();
 	public static String ruta = config.getProperty("credenciales");
 
-	/**
-	 * Buscador de credenciales, lee el fichero txt y busca las partes que
-	 * necesito imprimir creandome una instancia de Credenciales con los datos 
-	 * que necesito para contrastar o guardar.
-	 * @param usuarioBuscado
-	 * @param passwordBuscada
-	 * @return
-	 */
-/*	public static boolean login(String usuarioBuscado,
-			String passwordBuscada) {
+	public static boolean login(LoginDto loginDto) {
 
 		String adminUser = config.getProperty("useradmin");
 		String adminPass = config.getProperty("passadmin");
 
-		if (usuarioBuscado.equals(adminUser)
-				&& passwordBuscada.equals(adminPass)) {
-			return new Credenciales(0L, adminUser, adminPass, Perfiles.ADMIN);
+		if (loginDto.getUsuario().equals(adminUser) && loginDto.getPassword().equals(adminPass){
+			
 		}
+		
+		return buscarUsuario(usuarioBuscado, passwordBuscada);
+	}
 
-		return buscarUsuarioYPassword(usuarioBuscado, passwordBuscada);
-	}*/
-
-	private static Credenciales buscarUsuarioYPassword(String usuarioBuscado, String passwordBuscada) {
+	private static Credenciales buscarUsuario(String usuarioBuscado,
+					String passwordBuscada) {
 		try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
 			String linea;
 
@@ -68,7 +58,7 @@ public class CredencialesService {
 				String rol = partes[6].trim().toUpperCase();
 
 				if (usuario.equals(usuarioBuscado)
-						&& password.equals(passwordBuscada)) {
+								&& password.equals(passwordBuscada)) {
 					Long id = Long.parseLong(partes[0]);
 					Perfiles perfil;
 					try {
@@ -81,16 +71,16 @@ public class CredencialesService {
 			}
 		} catch (IOException e) {
 			System.out.println("Error al leer el fichero de credenciales: "
-					+ e.getMessage());
+							+ e.getMessage());
 		}
 
 		return null;
 	}
-	
-	
+
 	/**
-	 * Creo un objeto de la clase Credencial, comprobando antes que todos los valores
-	 * sean correctos.
+	 * Creo un objeto de la clase Credencial, comprobando antes que todos los
+	 * valores sean correctos.
+	 * 
 	 * @return
 	 */
 
@@ -101,33 +91,33 @@ public class CredencialesService {
 
 		do {
 			System.out.print(
-					"Introduce nombre de usuario (solo letras, sin espacios, mínimo 3): ");
+							"Introduce nombre de usuario (solo letras, sin espacios, mínimo 3): ");
 			usuario = sc.nextLine().trim().toLowerCase();
 
 			if (usuario.isEmpty()) {
 				System.out.println(
-						"❌ El nombre de usuario no puede estar vacío.");
+								"❌ El nombre de usuario no puede estar vacío.");
 				continue;
 			}
 
 			if (!usuario.matches("^[a-z]{3,}$")) {
 				System.out.println(
-						"❌ El usuario debe tener al menos 3 letras y no puede contener espacios ni acentos.");
+								"❌ El usuario debe tener al menos 3 letras y no puede contener espacios ni acentos.");
 				continue;
 			}
 
 			if (existeUsuarioOEmail(usuario, "")) {
 				System.out.println(
-						"❌ El nombre de usuario ya existe en el sistema.");
+								"❌ El nombre de usuario ya existe en el sistema.");
 				continue;
 			}
-			
+
 			break;
 		} while (true);
 
 		do {
 			System.out.print(
-					"Introduce contraseña (mínimo 4 caracteres, sin espacios): ");
+							"Introduce contraseña (mínimo 4 caracteres, sin espacios): ");
 			password = sc.nextLine().trim();
 
 			if (password.isEmpty()) {
@@ -136,14 +126,14 @@ public class CredencialesService {
 			}
 
 			if (password.contains(" ")) {
-				System.out
-						.println("❌ La contraseña no puede contener espacios.");
+				System.out.println(
+								"❌ La contraseña no puede contener espacios.");
 				continue;
 			}
 
 			if (password.length() < 4) {
 				System.out.println(
-						"❌ La contraseña debe tener al menos 4 caracteres.");
+								"❌ La contraseña debe tener al menos 4 caracteres.");
 				continue;
 			}
 
@@ -160,7 +150,7 @@ public class CredencialesService {
 
 			if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
 				System.out.println(
-						"❌ El formato de email no es válido (ejemplo: nombre@dominio.com).");
+								"❌ El formato de email no es válido (ejemplo: nombre@dominio.com).");
 				continue;
 			}
 
@@ -174,7 +164,7 @@ public class CredencialesService {
 
 		do {
 			System.out.print(
-					"Introduce nombre completo (solo letras y espacios): ");
+							"Introduce nombre completo (solo letras y espacios): ");
 			nombreCompleto = sc.nextLine().trim();
 
 			if (nombreCompleto.isEmpty()) {
@@ -184,7 +174,7 @@ public class CredencialesService {
 
 			if (!nombreCompleto.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")) {
 				System.out.println(
-						"❌ El nombre solo puede contener letras y espacios.");
+								"❌ El nombre solo puede contener letras y espacios.");
 				continue;
 			}
 
@@ -193,8 +183,8 @@ public class CredencialesService {
 
 		if (existeUsuarioOEmail(usuario, email)) {
 			System.out.println(
-					"❌ Ya existe un usuario o email igual en el sistema.");
-			
+							"❌ Ya existe un usuario o email igual en el sistema.");
+
 			return null;
 		}
 
@@ -202,14 +192,14 @@ public class CredencialesService {
 		Map<String, String> paises = paisService.obtenerTodosLosPaises();
 		if (paises == null || paises.isEmpty()) {
 			System.out.println(
-					"❌ No se pudieron cargar los países desde el XML.");
-			
+							"❌ No se pudieron cargar los países desde el XML.");
+
 			return null;
 		}
 
 		System.out.println("Países disponibles:");
 		paises.forEach((codigo, nombre) -> System.out
-				.println(codigo + " - " + nombre));
+						.println(codigo + " - " + nombre));
 
 		String codigoPais = "";
 
@@ -265,10 +255,11 @@ public class CredencialesService {
 
 					int opcion = -1;
 					try {
-					    opcion = Integer.parseInt(sc.nextLine().trim());
+						opcion = Integer.parseInt(sc.nextLine().trim());
 					} catch (NumberFormatException e) {
-					    System.out.println("❌ Debes introducir un número válido (1–5).");
-					    continue;
+						System.out.println(
+										"❌ Debes introducir un número válido (1–5).");
+						continue;
 					}
 
 					switch (opcion) {
@@ -294,7 +285,7 @@ public class CredencialesService {
 						break;
 					default:
 						System.out.println(
-								"❌ Opción inválida. Intenta de nuevo.");
+										"❌ Opción inválida. Intenta de nuevo.");
 						break;
 					}
 				}
@@ -305,7 +296,6 @@ public class CredencialesService {
 			}
 
 		} while (opcionPerfil < 1 || opcionPerfil > 2);
-	
 
 		Credenciales nueva = new Credenciales(null, usuario, password, perfil);
 
@@ -315,38 +305,41 @@ public class CredencialesService {
 	}
 
 	/**
-	 * En este metodo registramos al usuario, pasandole las credenciales,el email,
-	 * nombrecompleto y pais, y lo guardamos en el txt correspondiente. 
+	 * En este metodo registramos al usuario, pasandole las credenciales,el
+	 * email, nombrecompleto y pais, y lo guardamos en el txt correspondiente.
 	 * Esto se cambiara a futuro al DAO.
+	 * 
 	 * @param nuevo
 	 * @param email
 	 * @param nombreCompleto
 	 * @param pais
 	 */
 	private static void registrarUsuario(Credenciales nuevo, String email,
-			String nombreCompleto, String pais) {
-		
+					String nombreCompleto, String pais) {
+
 		try (BufferedWriter bw = new BufferedWriter(
-				new FileWriter(ruta, true))) {
-			String linea = String.format("%d|%s|%s|%s|%s|%s|%s", 
-					nuevo.getNombre(), nuevo.getPassword(), email,
-					nombreCompleto, pais,
-					nuevo.getPerfil().name().toLowerCase());
+						new FileWriter(ruta, true))) {
+			String linea = String.format("%d|%s|%s|%s|%s|%s|%s",
+							nuevo.getNombre(), nuevo.getPassword(), email,
+							nombreCompleto, pais,
+							nuevo.getPerfil().name().toLowerCase());
 			bw.newLine();
 			bw.write(linea);
 			System.out.println("✅ Usuario registrado con éxito.");
 
 		} catch (FileNotFoundException e) {
-			System.out.println(
-					"❌ No se encontró el fichero de credenciales: " + ruta);
+			System.out.println("❌ No se encontró el fichero de credenciales: "
+							+ ruta);
 		} catch (IOException e) {
-			System.out
-					.println("❌ Error al registrar usuario: " + e.getMessage());
+			System.out.println(
+							"❌ Error al registrar usuario: " + e.getMessage());
 		}
 	}
 
 	/**
-	 * Compara el usuario y el email para comprobar que no haya guardado otro igual.
+	 * Compara el usuario y el email para comprobar que no haya guardado otro
+	 * igual.
+	 * 
 	 * @param usuario
 	 * @param email
 	 * @return
@@ -363,16 +356,16 @@ public class CredencialesService {
 					String emailExistente = partes[3].trim().toLowerCase();
 
 					if (usuarioExistente.equals(usuario.toLowerCase())
-							|| emailExistente.equals(email.toLowerCase())) {
+									|| emailExistente.equals(
+													email.toLowerCase())) {
 						return true;
 					}
 				}
 			}
 		} catch (IOException e) {
-			System.out.println(
-					"❌ Error al leer credenciales.txt: " + e.getMessage());
+			System.out.println("❌ Error al leer credenciales.txt: "
+							+ e.getMessage());
 		}
 		return false;
 	}
 }
-

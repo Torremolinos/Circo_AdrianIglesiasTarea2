@@ -12,17 +12,15 @@ public class InvitadoController {
 
 	static Config config = new Config();
 	public static String ruta = config.getProperty("credenciales");
-	MenuInvitado menuInvitado;
-	Sesion sesion;
+	MenuInvitado menuInvitado = new MenuInvitado();
+	Sesion sesion = new Sesion(null, Perfiles.INVITADO);
 	CredencialesDAO credencialesDAO = new CredencialesDAO();
 
-	public InvitadoController() {
-
-	}
 
 	public void iniciar() {
 		boolean salir = false;
-		int opcion = menuInvitado.menuInvitado(sesion.getPerfil().name());
+		
+		int opcion = menuInvitado.menuInvitado(sesion.getPerfil());
 
 		while (!salir && sesion.getPerfil() == Perfiles.INVITADO) {
 
@@ -37,7 +35,7 @@ public class InvitadoController {
 				if (!login) {
 					menuInvitado.mostrarMensajeErrorUsuarioContrasenia();
 				} else {
-					menuInvitado.mostrarMensajeSesionIniciada(sesion.getPerfil().name());
+					menuInvitado.mostrarMensajeSesionIniciada(sesion.getPerfil);
 					// tengo que poner un metodo para cmaibar de menu segun perfil
 				}
 				break;

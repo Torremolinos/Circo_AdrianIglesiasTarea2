@@ -37,6 +37,7 @@ public class EspectaculoDAO {
 				e.setFechafin(rs.getDate("fechafin").toLocalDate());
 				e.setIdCoordinacion(rs.getLong("id_coordinacion"));
 				listaEspectaculos().add(e);
+				ps.close();
 			}
 
 		} catch (SQLException e) {

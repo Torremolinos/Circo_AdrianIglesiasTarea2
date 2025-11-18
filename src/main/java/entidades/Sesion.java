@@ -7,8 +7,6 @@
 
 package entidades;
 
-import entidades.Perfiles;
-
 public class Sesion {
 
 	private String nombre;
@@ -43,6 +41,11 @@ public class Sesion {
 	public void iniciarSesion(String usuario, Perfiles perfil) {
 		this.nombre = usuario;
 		this.perfil = perfil;
+	}
+	
+	public void sesionInvitado() {
+		this.nombre = null;
+		this.perfil = Perfiles.INVITADO;
 	}
 
 	public void cerrarSesion() {
