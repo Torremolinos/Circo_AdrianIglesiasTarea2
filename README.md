@@ -50,9 +50,6 @@ Acceso a datos: ficheros, XML, SQL (JDBC)
 📂 entidades/
 Modelo del dominio (Espectaculo, Artista, Coordinacion…)
 
-📂 fachada/
-Casos de uso (Vista → Fachada → Servicios)
-
 📂 service/
 Lógica de negocio del sistema
 
