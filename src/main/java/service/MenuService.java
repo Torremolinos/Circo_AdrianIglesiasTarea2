@@ -63,7 +63,7 @@ public class MenuService {
 				System.out.println("Introduce tu contraseña por favor: ");
 				String credencalPassword = usuario.nextLine().trim();
 
-				Credenciales credencialesUsuario = CredencialesService
+			/*	Credenciales credencialesUsuario = CredencialesService
 						.login(credencialUsuario,
 								credencalPassword);
 
@@ -77,7 +77,7 @@ public class MenuService {
 				} else {
 					System.out.println(
 							"❌ Usuario o contraseña incorrectos. Intentalo de nuevo.");
-				}
+				}*/
 				break;
 
 			case 2:

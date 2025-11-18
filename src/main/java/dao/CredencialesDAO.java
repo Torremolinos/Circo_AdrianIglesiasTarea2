@@ -24,7 +24,7 @@ public class CredencialesDAO {
 					.prepareStatement("SELECT * FROM credenciales WHERE usuario = ? AND password = ?");
 			ps.setString(1, usuario);
 			ps.setString(2, password);
-			
+			ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -10,7 +10,7 @@ package views;
 
 import java.util.Scanner;
 
-import controller.Controlador;
+import controller.MainController;
 import entidades.Credenciales;
 import entidades.Sesion;
 import service.CredencialesService;
@@ -20,7 +20,7 @@ public class MenuAdmin {
 
 	Sesion sesion;
 	
-	Controlador controlador;
+	MainController controlador;
 	/**
 	 * Este metodo gestiona el menuAdmin, dandonos acceso a las diferentes
 	 * acciones o funcionalidades que puede acceder el admin. Tambien hay partes
@@ -29,7 +29,7 @@ public class MenuAdmin {
 	 * @return
 	 */
 	private boolean menuAdmin() {
-		SesionActiva();
+	//SesionActiva();
 		boolean confirmarSalida;
 		String eleccionSalida;
 		EspectaculoService espectaculo = new EspectaculoService();
@@ -115,7 +115,7 @@ public class MenuAdmin {
 					case "s":
 						System.out.println("Saliendo al menú principal...");
 						sesion.cerrarSesion();
-						this.iniciarPrograma(sesion);
+						//this.iniciarPrograma(sesion);
 						comprobador = false;
 						return true;
 
@@ -146,7 +146,7 @@ public class MenuAdmin {
 					case "s":
 						System.out.println("Saliendo al menú principal...");
 						sesion.cerrarSesion();
-						this.iniciarPrograma(sesion);
+					//	this.iniciarPrograma(sesion);
 						comprobador = false;
 						return true;
 

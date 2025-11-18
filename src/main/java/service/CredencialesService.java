@@ -38,7 +38,7 @@ public class CredencialesService {
 	 * @param passwordBuscada
 	 * @return
 	 */
-	public static Credenciales login(String usuarioBuscado,
+/*	public static boolean login(String usuarioBuscado,
 			String passwordBuscada) {
 
 		String adminUser = config.getProperty("useradmin");
@@ -50,7 +50,7 @@ public class CredencialesService {
 		}
 
 		return buscarUsuarioYPassword(usuarioBuscado, passwordBuscada);
-	}
+	}*/
 
 	private static Credenciales buscarUsuarioYPassword(String usuarioBuscado, String passwordBuscada) {
 		try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
@@ -325,10 +325,10 @@ public class CredencialesService {
 	 */
 	private static void registrarUsuario(Credenciales nuevo, String email,
 			String nombreCompleto, String pais) {
-		long nuevoId = obtenerUltimoId(ruta) + 1;
+		
 		try (BufferedWriter bw = new BufferedWriter(
 				new FileWriter(ruta, true))) {
-			String linea = String.format("%d|%s|%s|%s|%s|%s|%s", nuevoId,
+			String linea = String.format("%d|%s|%s|%s|%s|%s|%s", 
 					nuevo.getNombre(), nuevo.getPassword(), email,
 					nombreCompleto, pais,
 					nuevo.getPerfil().name().toLowerCase());

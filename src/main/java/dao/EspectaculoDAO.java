@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 
 import entidades.Coordinacion;
 import entidades.Espectaculo;
+import entidades.Perfiles;
+import entidades.Sesion;
 
 public class EspectaculoDAO {
 
@@ -43,5 +45,17 @@ public class EspectaculoDAO {
 		}
 		return listaEspectaculos();
 	}
+	
+	public static void guardarEspectaculos(LinkedHashSet<Espectaculo> espectaculos) {
+		
+	}
 
+	public void mostrarInforme(Perfiles perfil) {}
+	
+	public static void crearEspectaculo(Sesion sesion, Perfiles perfilUsuario) {}
+	
+	public static Coordinacion seleccionarCoordinador() {
+		return null;}
+	
+	public static void modificarEspectaculo(Perfiles perfilUsuario) {}
 }

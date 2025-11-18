@@ -213,30 +213,12 @@ public class EspectaculoService {
 		}
 
 		Espectaculo nuevo = new Espectaculo();
-		nuevo.setId(generarNuevoId());
 		nuevo.setNombre(nombreValido);
 		nuevo.setFechaini(inicio);
 		nuevo.setFechafin(fin);
 		nuevo.setCoordinacion(usuarioCoord);
 		existentes.add(nuevo);
 		guardarEspectaculos(existentes);
-	}
-
-	/**
-	 * Generar un nuevo Id,primero revisamos que no este vacio luego crea el
-	 * flujo para espectaculos, despues recogemos el id con el mapToLong, para
-	 * finalmente con max ver el flujo de numeros y obtener el valor maximo. El
-	 * orElse ya toma ese id que por defecto sino hay es 0 y le sumamos 1.
-	 * 
-	 * @return
-	 */
-	private static long generarNuevoId() {
-
-		Set<Espectaculo> existentes = listaEspectaculos();
-
-		return existentes.isEmpty() ? 1
-						: existentes.stream().mapToLong(Espectaculo::getId)
-										.max().orElse(0) + 1;
 	}
 
 	/**

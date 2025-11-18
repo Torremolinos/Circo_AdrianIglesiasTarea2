@@ -13,7 +13,7 @@ import service.EspectaculoService;
 import service.MenuService;
 import service.PaisService;
 
-public class Controlador {
+public class MainController {
 
 	private Sesion sesion;
 
@@ -25,7 +25,7 @@ public class Controlador {
 
 	private PaisService paisService;
 
-	public Controlador() {
+	public MainController() {
 
 		this.sesion = new Sesion();
 		this.menuService = new MenuService(this.sesion);

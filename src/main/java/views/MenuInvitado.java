@@ -9,14 +9,12 @@ package views;
 
 import java.util.Scanner;
 
-import entidades.Sesion;
-
 public class MenuInvitado {
 
 	private final Scanner sc = new Scanner(System.in);
 
-	public int pedirOpcion(Sesion sesion) {
-		System.out.println("Bienvenido " + sesion.getPerfil());
+	public int menuInvitado(String perfil) {
+		System.out.println("Bienvenido " + perfil);
 		System.out.println("🎪 Te damos la bienvenida a nuestro Circo 🎪 ");
 		System.out.println("1.Iniciar sesión");
 		System.out.println("2.Ver espectáculos");
@@ -29,7 +27,6 @@ public class MenuInvitado {
 			System.out.println("⚠️ Debes introducir un número, entre 1 a 3");
 			return -1;
 		}
-
 	}
 
 	public String pedirUsuario() {
@@ -43,21 +40,31 @@ public class MenuInvitado {
 	}
 
 	public boolean confirmarSalida() {
-		while (true) {
+		String respuestaUsuario;
+		boolean esValido;
+
+		do {
 			System.out.println("¿Seguro que quieres salir? (S/N)");
-			String respuesta = sc.nextLine().trim().toLowerCase();
-			if (respuesta.equals("s")) {
-				return true;
+			respuestaUsuario = sc.nextLine().trim().toLowerCase();
+			esValido = respuestaUsuario.equals("s") || respuestaUsuario.equals("n");
+
+			if (!esValido) {
+				System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 			}
 
-			if (respuesta.equals("n")) {
-				return false;
-			}
-			System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
-		}
+		} while (!esValido);
+
+		return respuestaUsuario.equals("s");
 	}
 
-	public void mostrarMensaje(String mensaje) {
-		System.out.println(mensaje);
+	public void mostrarMensajeErrorUsuarioContrasenia() {
+		System.out.println("❌ Usuario o contraseña incorrectos.");
+	}
+
+	public void mostrarMensajeSesionIniciada(String perfil) {
+		System.out.println("✅ Sesión iniciada como " + perfil);
+	}
+	public void mostrarMensajeErrorOpcion() {
+		System.out.println("⚠️ Opción no válida. Elige de 1 a 3.");
 	}
 }
