@@ -20,7 +20,7 @@ public class InvitadoController {
 	public void iniciar() {
 		boolean salir = false;
 		
-		int opcion = menuInvitado.menuInvitado(sesion.getPerfil());
+		int opcion = menuInvitado.menuInvitado(sesion.getPerfil().name());
 
 		while (!salir && sesion.getPerfil() == Perfiles.INVITADO) {
 
@@ -57,6 +57,10 @@ public class InvitadoController {
 		
 	}
 	
+	public void logout() {}
+	
+	
+	
 	/*public static Credenciales login(String usuarioBuscado,
 			String passwordBuscada) {
 		
@@ -75,5 +79,4 @@ public class InvitadoController {
 	//	return buscarUsuarioYPassword(usuarioBuscado, passwordBuscada);
 //	}
 	
-
 }

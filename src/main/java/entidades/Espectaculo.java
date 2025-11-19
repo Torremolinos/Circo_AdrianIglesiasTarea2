@@ -84,7 +84,10 @@ public class Espectaculo {
 	}
 
 	public void setIdCoordinacion(Long id) {
-		this.coordinacion.setIdCoord(id);
+	    if (this.coordinacion == null) {
+	        this.coordinacion = new Coordinacion();
+	    }
+	    this.coordinacion.setIdCoord(id);
 	}
 
 }

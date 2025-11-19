@@ -47,15 +47,21 @@ public class Sesion {
 		this.nombre = null;
 		this.perfil = Perfiles.INVITADO;
 	}
-
-	public void cerrarSesion() {
+	public void sesionAdmin() {
 		this.nombre = null;
-		this.perfil = Perfiles.INVITADO;
+		this.perfil = Perfiles.ADMIN;
 	}
-	
+	public void sesionCoordinador() {
+		this.nombre = null;
+		this.perfil = Perfiles.COORDINADOR;
+	}
+	public void sesionArtista() {
+		this.nombre = null;
+		this.perfil = Perfiles.ARTISTA;
+	}
+
 	public boolean isAutenticado() {
 		return perfil != Perfiles.INVITADO;
 	}
-
 	
 }

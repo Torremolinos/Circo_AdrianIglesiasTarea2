@@ -17,7 +17,7 @@ import java.sql.Date;
 import java.util.Map;
 import java.util.Scanner;
 
-import dto.LoginDto;
+import dao.CredencialesDAO;
 import entidades.Credenciales;
 import entidades.Especialidades;
 import entidades.Perfiles;
@@ -29,86 +29,53 @@ public class CredencialesService {
 	static Config config = new Config();
 	public static String ruta = config.getProperty("credenciales");
 
-	public static boolean login(LoginDto loginDto) {
+	public Credenciales login(String nombre, String password) {
 
 		String adminUser = config.getProperty("useradmin");
 		String adminPass = config.getProperty("passadmin");
 
-		if (loginDto.getUsuario().equals(adminUser) && loginDto.getPassword().equals(adminPass){
-			
+		if (nombre.equals(adminUser) && password.equals(adminPass)) {
+			Credenciales adminCredenciales = new Credenciales("admin", "admin", Perfiles.ADMIN);
+			return adminCredenciales;
 		}
-		
-		return buscarUsuario(usuarioBuscado, passwordBuscada);
+
+		return buscarUsuario(nombre, password);
 	}
+	
 
-	private static Credenciales buscarUsuario(String usuarioBuscado,
-					String passwordBuscada) {
-		try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
-			String linea;
+	private Credenciales buscarUsuario(String nombre, String password) {
+		CredencialesDAO credencialesDAO = new CredencialesDAO();
+		return credencialesDAO.buscarUsuario(nombre, password);
 
-			while ((linea = br.readLine()) != null) {
-				if (linea.trim().isEmpty())
-					continue;
-
-				String[] partes = linea.split("\\|");
-				if (partes.length < 7)
-					continue;
-				String usuario = partes[1];
-				String password = partes[2];
-				String rol = partes[6].trim().toUpperCase();
-
-				if (usuario.equals(usuarioBuscado)
-								&& password.equals(passwordBuscada)) {
-					Long id = Long.parseLong(partes[0]);
-					Perfiles perfil;
-					try {
-						perfil = Perfiles.valueOf(rol);
-					} catch (IllegalArgumentException e) {
-						perfil = Perfiles.INVITADO;
-					}
-					return new Credenciales(id, usuario, password, perfil);
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error al leer el fichero de credenciales: "
-							+ e.getMessage());
-		}
-
-		return null;
 	}
 
 	/**
-	 * Creo un objeto de la clase Credencial, comprobando antes que todos los
-	 * valores sean correctos.
+	 * Método para crear una nueva Credencial sando comprobaciones de utils
 	 * 
-	 * @return
+	 * @return @Credenciales
 	 */
+	
+	//TODO
 
-	public static Credenciales crearNuevaCredencial() {
+	/*public static Credenciales crearNuevaCredencial(String usuario, String password, String email,
+			String nombrecompleto, String pais) {
 		Scanner sc = new Scanner(System.in);
-		String usuario, password, email, nombreCompleto, pais;
 		Perfiles perfil = null;
 
-		do {
-			System.out.print(
-							"Introduce nombre de usuario (solo letras, sin espacios, mínimo 3): ");
-			usuario = sc.nextLine().trim().toLowerCase();
-
+	/*	do {
 			if (usuario.isEmpty()) {
-				System.out.println(
-								"❌ El nombre de usuario no puede estar vacío.");
+				System.out.println("❌ El nombre de usuario no puede estar vacío.");
 				continue;
 			}
 
 			if (!usuario.matches("^[a-z]{3,}$")) {
-				System.out.println(
-								"❌ El usuario debe tener al menos 3 letras y no puede contener espacios ni acentos.");
+				System.out
+						.println("❌ El usuario debe tener al menos 3 letras y no puede contener espacios ni acentos.");
 				continue;
 			}
 
 			if (existeUsuarioOEmail(usuario, "")) {
-				System.out.println(
-								"❌ El nombre de usuario ya existe en el sistema.");
+				System.out.println("❌ El nombre de usuario ya existe en el sistema.");
 				continue;
 			}
 
@@ -116,8 +83,7 @@ public class CredencialesService {
 		} while (true);
 
 		do {
-			System.out.print(
-							"Introduce contraseña (mínimo 4 caracteres, sin espacios): ");
+			System.out.print("Introduce contraseña (mínimo 4 caracteres, sin espacios): ");
 			password = sc.nextLine().trim();
 
 			if (password.isEmpty()) {
@@ -126,14 +92,12 @@ public class CredencialesService {
 			}
 
 			if (password.contains(" ")) {
-				System.out.println(
-								"❌ La contraseña no puede contener espacios.");
+				System.out.println("❌ La contraseña no puede contener espacios.");
 				continue;
 			}
 
 			if (password.length() < 4) {
-				System.out.println(
-								"❌ La contraseña debe tener al menos 4 caracteres.");
+				System.out.println("❌ La contraseña debe tener al menos 4 caracteres.");
 				continue;
 			}
 
@@ -149,8 +113,7 @@ public class CredencialesService {
 			}
 
 			if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-				System.out.println(
-								"❌ El formato de email no es válido (ejemplo: nombre@dominio.com).");
+				System.out.println("❌ El formato de email no es válido (ejemplo: nombre@dominio.com).");
 				continue;
 			}
 
@@ -163,8 +126,7 @@ public class CredencialesService {
 		} while (true);
 
 		do {
-			System.out.print(
-							"Introduce nombre completo (solo letras y espacios): ");
+			System.out.print("Introduce nombre completo (solo letras y espacios): ");
 			nombreCompleto = sc.nextLine().trim();
 
 			if (nombreCompleto.isEmpty()) {
@@ -173,8 +135,7 @@ public class CredencialesService {
 			}
 
 			if (!nombreCompleto.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")) {
-				System.out.println(
-								"❌ El nombre solo puede contener letras y espacios.");
+				System.out.println("❌ El nombre solo puede contener letras y espacios.");
 				continue;
 			}
 
@@ -182,8 +143,7 @@ public class CredencialesService {
 		} while (true);
 
 		if (existeUsuarioOEmail(usuario, email)) {
-			System.out.println(
-							"❌ Ya existe un usuario o email igual en el sistema.");
+			System.out.println("❌ Ya existe un usuario o email igual en el sistema.");
 
 			return null;
 		}
@@ -191,15 +151,13 @@ public class CredencialesService {
 		PaisService paisService = new PaisService();
 		Map<String, String> paises = paisService.obtenerTodosLosPaises();
 		if (paises == null || paises.isEmpty()) {
-			System.out.println(
-							"❌ No se pudieron cargar los países desde el XML.");
+			System.out.println("❌ No se pudieron cargar los países desde el XML.");
 
 			return null;
 		}
 
 		System.out.println("Países disponibles:");
-		paises.forEach((codigo, nombre) -> System.out
-						.println(codigo + " - " + nombre));
+		paises.forEach((codigo, nombre) -> System.out.println(codigo + " - " + nombre));
 
 		String codigoPais = "";
 
@@ -257,8 +215,7 @@ public class CredencialesService {
 					try {
 						opcion = Integer.parseInt(sc.nextLine().trim());
 					} catch (NumberFormatException e) {
-						System.out.println(
-										"❌ Debes introducir un número válido (1–5).");
+						System.out.println("❌ Debes introducir un número válido (1–5).");
 						continue;
 					}
 
@@ -284,8 +241,7 @@ public class CredencialesService {
 						especialidadValida = true;
 						break;
 					default:
-						System.out.println(
-										"❌ Opción inválida. Intenta de nuevo.");
+						System.out.println("❌ Opción inválida. Intenta de nuevo.");
 						break;
 					}
 				}
@@ -296,49 +252,47 @@ public class CredencialesService {
 			}
 
 		} while (opcionPerfil < 1 || opcionPerfil > 2);
+		return null;
 
-		Credenciales nueva = new Credenciales(null, usuario, password, perfil);
+		// Credenciales nueva = new Credenciales(null, usuario, password, perfil);
 
-		registrarUsuario(nueva, email, nombreCompleto, pais);
+		// registrarUsuario(nueva, email, nombreCompleto, pais);
 
-		return nueva;
-	}
+		// return nueva;
+		///
+		///
+		///REFACTORIZAR
+		 
+	}*/
 
 	/**
-	 * En este metodo registramos al usuario, pasandole las credenciales,el
-	 * email, nombrecompleto y pais, y lo guardamos en el txt correspondiente.
-	 * Esto se cambiara a futuro al DAO.
+	 * En este metodo registramos al usuario, pasandole las credenciales,el email,
+	 * nombrecompleto y pais, y lo guardamos en el txt correspondiente. Esto se
+	 * cambiara a futuro al DAO.
 	 * 
 	 * @param nuevo
 	 * @param email
 	 * @param nombreCompleto
 	 * @param pais
 	 */
-	private static void registrarUsuario(Credenciales nuevo, String email,
-					String nombreCompleto, String pais) {
+	private static void registrarUsuario(Credenciales nuevo, String email, String nombreCompleto, String pais) {
 
-		try (BufferedWriter bw = new BufferedWriter(
-						new FileWriter(ruta, true))) {
-			String linea = String.format("%d|%s|%s|%s|%s|%s|%s",
-							nuevo.getNombre(), nuevo.getPassword(), email,
-							nombreCompleto, pais,
-							nuevo.getPerfil().name().toLowerCase());
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ruta, true))) {
+			String linea = String.format("%d|%s|%s|%s|%s|%s|%s", nuevo.getNombre(), nuevo.getPassword(), email,
+					nombreCompleto, pais, nuevo.getPerfil().name().toLowerCase());
 			bw.newLine();
 			bw.write(linea);
 			System.out.println("✅ Usuario registrado con éxito.");
 
 		} catch (FileNotFoundException e) {
-			System.out.println("❌ No se encontró el fichero de credenciales: "
-							+ ruta);
+			System.out.println("❌ No se encontró el fichero de credenciales: " + ruta);
 		} catch (IOException e) {
-			System.out.println(
-							"❌ Error al registrar usuario: " + e.getMessage());
+			System.out.println("❌ Error al registrar usuario: " + e.getMessage());
 		}
 	}
 
 	/**
-	 * Compara el usuario y el email para comprobar que no haya guardado otro
-	 * igual.
+	 * Compara el usuario y el email para comprobar que no haya guardado otro igual.
 	 * 
 	 * @param usuario
 	 * @param email
@@ -355,16 +309,13 @@ public class CredencialesService {
 					String usuarioExistente = partes[1].trim().toLowerCase();
 					String emailExistente = partes[3].trim().toLowerCase();
 
-					if (usuarioExistente.equals(usuario.toLowerCase())
-									|| emailExistente.equals(
-													email.toLowerCase())) {
+					if (usuarioExistente.equals(usuario.toLowerCase()) || emailExistente.equals(email.toLowerCase())) {
 						return true;
 					}
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("❌ Error al leer credenciales.txt: "
-							+ e.getMessage());
+			System.out.println("❌ Error al leer credenciales.txt: " + e.getMessage());
 		}
 		return false;
 	}

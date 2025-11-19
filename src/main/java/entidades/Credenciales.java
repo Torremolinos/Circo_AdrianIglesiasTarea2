@@ -19,8 +19,14 @@ public class Credenciales {
 		super();
 	}
 
-	public Credenciales(Long id, String nombre, String password,
-					Long id_persona, Perfiles perfil) {
+	public Credenciales(String nombre, String password, Perfiles perfil) {
+		super();
+		this.nombre = nombre;
+		this.password = password;
+		this.perfil = perfil;
+	}
+
+	public Credenciales(Long id, String nombre, String password, Long id_persona, Perfiles perfil) {
 		super();
 		this.id = id;
 		this.nombre = nombre;

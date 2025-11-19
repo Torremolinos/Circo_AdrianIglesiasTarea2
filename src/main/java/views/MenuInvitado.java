@@ -15,7 +15,9 @@ public class MenuInvitado {
 
 	private final Scanner sc = new Scanner(System.in);
 
-	public int menuInvitado(Perfiles perfiles) {
+	
+	
+	public int menuInvitado(String perfiles) {
 		System.out.println("Bienvenido " + perfiles);
 		System.out.println("🎪 Te damos la bienvenida a nuestro Circo 🎪 ");
 		System.out.println("1.Iniciar sesión");
