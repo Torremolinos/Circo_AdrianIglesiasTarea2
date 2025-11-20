@@ -15,6 +15,7 @@ public class Coordinacion extends Persona {
 	private Long idCoord;
 	private Boolean senior = false;
 	private LocalDate fechasenior;
+	private Long id_persona;
 	private LinkedHashSet<Espectaculo> espectaculos;
 
 	public Coordinacion() {
@@ -27,6 +28,16 @@ public class Coordinacion extends Persona {
 		this.idCoord = idCoord;
 		this.senior = senior;
 		this.fechasenior = fechasenior;
+		this.espectaculos = espectaculos;
+	}
+
+	public Coordinacion(Long idCoord, Boolean senior, LocalDate fechasenior,
+			Long id_persona, LinkedHashSet<Espectaculo> espectaculos) {
+		super();
+		this.idCoord = idCoord;
+		this.senior = senior;
+		this.fechasenior = fechasenior;
+		this.id_persona = id_persona;
 		this.espectaculos = espectaculos;
 	}
 
@@ -60,6 +71,14 @@ public class Coordinacion extends Persona {
 
 	public void setEspectaculos(LinkedHashSet<Espectaculo> espectaculos) {
 		this.espectaculos = espectaculos;
+	}
+
+	public Long getId_persona() {
+		return id_persona;
+	}
+
+	public void setId_persona(Long id_persona) {
+		this.id_persona = id_persona;
 	}
 
 }

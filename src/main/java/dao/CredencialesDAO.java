@@ -20,12 +20,21 @@ import utils.DatabaseConnection;
 public class CredencialesDAO {
 
 	private Connection connection;
-	private static final Logger LOGGER = Logger.getLogger(CoordinacionDAO.class.getName());
+	private static final Logger LOGGER = Logger
+			.getLogger(CoordinacionDAO.class.getName());
 
-	  public CredencialesDAO() {
-	        this.connection = DatabaseConnection.getInstance().getConnection();
-	    }
-	
+	public CredencialesDAO() {
+		this.connection = DatabaseConnection.getInstance().getConnection();
+	}
+
+	/***
+	 * Metodo para buscar un usuario y traer sus credenciales, pasando el nombre
+	 * y la contrasenia
+	 * 
+	 * @param nombre
+	 * @param password
+	 * @return
+	 */
 	public Credenciales buscarUsuario(String nombre, String password) {
 		Credenciales credenciales = null;
 		String consulta = "SELECT * FROM credenciales WHERE nombre = ? AND password = ?";
@@ -39,11 +48,14 @@ public class CredencialesDAO {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				credenciales = new Credenciales(rs.getLong("id"), rs.getString("nombre"), rs.getString("password"),
-						rs.getLong("id_persona"), Perfiles.valueOf(rs.getString("perfiles").toUpperCase()));
+				credenciales = new Credenciales(rs.getLong("id"),
+						rs.getString("nombre"), rs.getString("password"),
+						rs.getLong("id_persona"), Perfiles.valueOf(
+								rs.getString("perfiles").toUpperCase()));
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al consultar usuario y contraseña", e);
+			LOGGER.log(Level.SEVERE, "Error al consultar usuario y contraseña",
+					e);
 		} finally {
 			try {
 				if (rs != null)
@@ -57,34 +69,38 @@ public class CredencialesDAO {
 		return credenciales;
 	}
 
-	public Credenciales crearNuevaCredencial() {
-		Credenciales credenciales = null;
-		String consulta = "SELECT * FROM credenciales";
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
-		try {
-			ps = connection.prepareStatement(consulta);
-			rs = ps.executeQuery();
+	/***
+	 * Metodo para registrar una nueva credencial pasandole de parametros
+	 * nombre, password, id_persona y perfil
+	 * 
+	 * @param nombre
+	 * @param password
+	 * @param idPersona
+	 * @param perfil
+	 * @return
+	 */
+	public boolean registrarNuevaCredencial(String nombre, String password,
+			Long idPersona, Perfiles perfil) {
 
-			if (rs.next()) {
-				credenciales = new Credenciales(rs.getLong("id"), rs.getString("nombre"), rs.getString("password"),
-						rs.getLong("id_persona"), Perfiles.valueOf(rs.getString("perfiles").toUpperCase()));
-			}
+		String consulta = "INSERT INTO credenciales (nombre, password, id_persona, perfiles) "
+				+ "VALUES (?, ?, ?, ?)";
+
+		try (PreparedStatement ps = connection.prepareStatement(consulta)) {
+
+			ps.setString(1, nombre.toLowerCase());
+			ps.setString(2, password);
+			ps.setLong(3, idPersona);
+			ps.setString(4, perfil.name());
+
+			int filas = ps.executeUpdate();
+			return filas > 0;
+
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al consultar usuario y contraseña", e);
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (ps != null)
-					ps.close();
-			} catch (SQLException e) {
-				LOGGER.log(Level.WARNING, "Error cerrando recursos", e);
-			}
+			LOGGER.log(Level.SEVERE,
+					" Error creando credenciales: " + e.getMessage());
 		}
-		return credenciales;
+
+		return false;
 	}
-	
-	
+
 }

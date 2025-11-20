@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import dao.CoordinacionDAO;
 import dao.EspectaculoDAO;
 import entidades.Coordinacion;
 import entidades.Espectaculo;
@@ -30,8 +31,6 @@ import entidades.Perfiles;
 import entidades.Sesion;
 import utils.Config;
 import utils.Utilidades;
-
-
 
 public class EspectaculoService {
 
@@ -47,14 +46,14 @@ public class EspectaculoService {
 	 * @param espectaculos
 	 */
 	public static void guardarEspectaculos(
-					LinkedHashSet<Espectaculo> espectaculos) {
+			LinkedHashSet<Espectaculo> espectaculos) {
 		try (ObjectOutputStream oos = new ObjectOutputStream(
-						new FileOutputStream(RUTA))) {
+				new FileOutputStream(RUTA))) {
 			oos.writeObject(espectaculos);
 			System.out.println("✅ Espectáculos guardados correctamente.");
 		} catch (IOException e) {
-			System.out.println("❌ Error al guardar los espectáculos: "
-							+ e.getMessage());
+			System.out.println(
+					"❌ Error al guardar los espectáculos: " + e.getMessage());
 		}
 	}
 
@@ -72,7 +71,7 @@ public class EspectaculoService {
 			return new LinkedHashSet<>();
 
 		try (ObjectInputStream ois = new ObjectInputStream(
-						new FileInputStream(file))) {
+				new FileInputStream(file))) {
 			Object obj = ois.readObject();
 			if (obj instanceof LinkedHashSet) {
 				return (LinkedHashSet<Espectaculo>) obj;
@@ -88,8 +87,8 @@ public class EspectaculoService {
 	}
 
 	/**
-	 * Esta función muestra un informe básico para los invitados
-	 * muestra el id, nombre, fechainicio y fechafin.
+	 * Esta función muestra un informe básico para los invitados muestra el id,
+	 * nombre, fechainicio y fechafin.
 	 * 
 	 * 
 	 */
@@ -102,60 +101,37 @@ public class EspectaculoService {
 			return;
 		}
 		for (Espectaculo e : espectaculos) {
-		    System.out.println(e.getId() + " - " + e.getNombre() + 
-		                       " (" + e.getFechaini() + " a " + e.getFechafin() + ")");
-		    }
-		
-		
-		
-		/*switch (perfil) {
-		case INVITADO:
-			System.out.println("INFORME DE ESPECTÁCULOS");
-			System.out.println("---------------------------");
-			for (Espectaculo e : espectaculos) {
-				System.out.println("ID: " + e.getId());
-				System.out.println("Nombre: " + e.getNombre());
-				System.out.println("Periodo desde: " + e.getFechaini()
-								+ " hasta " + e.getFechafin());
-				System.out.println();
-			}
-			break;
-		case ADMIN:
-			System.out.println("INFORME DE ESPECTÁCULOS");
-			System.out.println("---------------------------");
-			for (Espectaculo e : espectaculos) {
-				System.out.println("ID: " + e.getId());
-				System.out.println("Nombre: " + e.getNombre());
-				System.out.println("Periodo desde: " + e.getFechaini()
-								+ " hasta " + e.getFechafin());
-				System.out.println();
-			}
-			break;
-		case ARTISTA:
-			System.out.println("INFORME DE ESPECTÁCULOS");
-			System.out.println("---------------------------");
-			for (Espectaculo e : espectaculos) {
-				System.out.println("ID: " + e.getId());
-				System.out.println("Nombre: " + e.getNombre());
-				System.out.println("Periodo desde: " + e.getFechaini()
-								+ " hasta " + e.getFechafin());
-				System.out.println();
-			}
-			break;
-		case COORDINADOR:
-			System.out.println("INFORME DE ESPECTÁCULOS");
-			System.out.println("---------------------------");
-			for (Espectaculo e : espectaculos) {
-				System.out.println("ID: " + e.getId());
-				System.out.println("Nombre: " + e.getNombre());
-				System.out.println("Periodo desde: " + e.getFechaini()
-								+ " hasta " + e.getFechafin());
-				System.out.println();
-			}
-			break;
-		default:
-			break;
-		}*/
+			System.out.println(e.getId() + " - " + e.getNombre() + " ("
+					+ e.getFechaini() + " a " + e.getFechafin() + ")");
+		}
+
+		/*
+		 * switch (perfil) { case INVITADO:
+		 * System.out.println("INFORME DE ESPECTÁCULOS");
+		 * System.out.println("---------------------------"); for (Espectaculo e
+		 * : espectaculos) { System.out.println("ID: " + e.getId());
+		 * System.out.println("Nombre: " + e.getNombre());
+		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
+		 * e.getFechafin()); System.out.println(); } break; case ADMIN:
+		 * System.out.println("INFORME DE ESPECTÁCULOS");
+		 * System.out.println("---------------------------"); for (Espectaculo e
+		 * : espectaculos) { System.out.println("ID: " + e.getId());
+		 * System.out.println("Nombre: " + e.getNombre());
+		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
+		 * e.getFechafin()); System.out.println(); } break; case ARTISTA:
+		 * System.out.println("INFORME DE ESPECTÁCULOS");
+		 * System.out.println("---------------------------"); for (Espectaculo e
+		 * : espectaculos) { System.out.println("ID: " + e.getId());
+		 * System.out.println("Nombre: " + e.getNombre());
+		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
+		 * e.getFechafin()); System.out.println(); } break; case COORDINADOR:
+		 * System.out.println("INFORME DE ESPECTÁCULOS");
+		 * System.out.println("---------------------------"); for (Espectaculo e
+		 * : espectaculos) { System.out.println("ID: " + e.getId());
+		 * System.out.println("Nombre: " + e.getNombre());
+		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
+		 * e.getFechafin()); System.out.println(); } break; default: break; }
+		 */
 
 	}
 
@@ -176,18 +152,18 @@ public class EspectaculoService {
 		String nombreValido = null;
 		while (true) {
 			System.out.print(
-							"Introduce el nombre del espectáculo (máx 25 caracteres): ");
+					"Introduce el nombre del espectáculo (máx 25 caracteres): ");
 			String nombre = sc.nextLine().trim();
 			if (nombre.isEmpty() || nombre.length() > 25) {
 				System.out.println(
-								"❌ El nombre no puede estar vacío ni superar 25 caracteres.");
+						"❌ El nombre no puede estar vacío ni superar 25 caracteres.");
 				continue;
 			}
-			boolean repetido = existentes.stream().anyMatch(
-							e -> e.getNombre().equalsIgnoreCase(nombre));
+			boolean repetido = existentes.stream()
+					.anyMatch(e -> e.getNombre().equalsIgnoreCase(nombre));
 			if (repetido) {
-				System.out.println(
-								"❌ Ya existe un espectáculo con ese nombre.");
+				System.out
+						.println("❌ Ya existe un espectáculo con ese nombre.");
 				continue;
 			}
 			nombreValido = nombre;
@@ -202,7 +178,7 @@ public class EspectaculoService {
 
 		if (fin.isBefore(inicio)) {
 			System.out.println(
-							"❌ La fecha de fin debe ser posterior a la de inicio.");
+					"❌ La fecha de fin debe ser posterior a la de inicio.");
 
 			return;
 		}
@@ -212,9 +188,8 @@ public class EspectaculoService {
 			return;
 		}
 
-		
 		if (perfilUsuario == Perfiles.COORDINACION) {
-			String nombreCoordinadorSesion=sesion.getNombre();
+			String nombreCoordinadorSesion = sesion.getNombre();
 			usuarioCoord.setNombre(nombreCoordinadorSesion);
 		} else if (perfilUsuario == Perfiles.ADMIN) {
 			usuarioCoord = seleccionarCoordinador();
@@ -224,7 +199,7 @@ public class EspectaculoService {
 		nuevo.setNombre(nombreValido);
 		nuevo.setFechaini(inicio);
 		nuevo.setFechafin(fin);
-		nuevo.setCoordinacion(usuarioCoord);
+		nuevo.setId_coordinacion(usuarioCoord.getId());
 		existentes.add(nuevo);
 		guardarEspectaculos(existentes);
 	}
@@ -242,12 +217,12 @@ public class EspectaculoService {
 
 		try {
 			BufferedReader lectura = new BufferedReader(
-							new FileReader(RUTAcredenciales));
+					new FileReader(RUTAcredenciales));
 			String linea;
 			while ((linea = lectura.readLine()) != null) {
 				String[] parte = linea.split("\\|");
 				if (parte.length == 7
-								&& parte[6].equalsIgnoreCase("coordinacion")) {
+						&& parte[6].equalsIgnoreCase("coordinacion")) {
 					Coordinacion coordinador = new Coordinacion();
 					coordinador.setId((long) Integer.parseInt(parte[0]) + 1);
 					coordinador.setNombre(parte[4]);
@@ -256,8 +231,8 @@ public class EspectaculoService {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(
-							"❌ Error al leer credenciales: " + e.getMessage());
+			System.out
+					.println("❌ Error al leer credenciales: " + e.getMessage());
 
 			return null;
 		}
@@ -270,8 +245,8 @@ public class EspectaculoService {
 		for (int i = 0; i < coordinadores.size(); i++) {
 			Coordinacion listaCordinadoresRegistrados = coordinadores.get(i);
 			System.out.printf("%d → %s (%s)%n", (i + 1),
-							listaCordinadoresRegistrados.getNombre(),
-							listaCordinadoresRegistrados.getNacionalidad());
+					listaCordinadoresRegistrados.getNombre(),
+					listaCordinadoresRegistrados.getNacionalidad());
 		}
 
 		int eleccion = -1;
@@ -308,7 +283,7 @@ public class EspectaculoService {
 
 		if (espectaculos.isEmpty()) {
 			System.out.println(
-							"⚠ No hay espectáculos registrados para modificar.");
+					"⚠ No hay espectáculos registrados para modificar.");
 
 			return;
 		}
@@ -316,14 +291,15 @@ public class EspectaculoService {
 		System.out.println("=== LISTA DE ESPECTÁCULOS ===");
 		for (Espectaculo e : espectaculos) {
 			System.out.println("ID: " + e.getId() + " → " + e.getNombre() + " ("
-							+ e.getFechaini() + " → " + e.getFechafin() + ")");
+					+ e.getFechaini() + " → " + e.getFechafin() + ")");
 		}
 
 		System.out.print(
-						"Introduce el ID del espectáculo que deseas modificar: ");
+				"Introduce el ID del espectáculo que deseas modificar: ");
 		long idBuscado = Long.parseLong(sc.nextLine().trim());
 
 		Espectaculo seleccionado = null;
+		Coordinacion coordinadorSeleccionado = null;
 		for (Espectaculo e : espectaculos) {
 			if (e.getId() == idBuscado) {
 				seleccionado = e;
@@ -336,22 +312,24 @@ public class EspectaculoService {
 
 			return;
 		}
-
+		Long id_coordinacion = seleccionado.getId_coordinacion();
+		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
+		coordinadorSeleccionado = coordinacionDAO
+				.buscarPorIdCoordinacion(id_coordinacion);
 		System.out.println("\n=== Modificando espectáculo ===");
 		System.out.println("Nombre actual: " + seleccionado.getNombre());
 		System.out.println("Inicio actual: " + seleccionado.getFechaini());
 		System.out.println("Fin actual: " + seleccionado.getFechafin());
 		System.out.println("Coordinador actual: "
-						+ (seleccionado.getCoordinacion() != null
-										? seleccionado.getCoordinacion()
-														.getNombre()
-										: "Sin asignar"));
+				+ (coordinadorSeleccionado.getId_persona() != null
+						? coordinadorSeleccionado.getNombre()
+						: "Sin asignar"));
 
 		String nuevoNombre = "";
 
 		while (true) {
-			System.out.print(
-							"Introduce el nuevo nombre (Enter para mantener): ");
+			System.out
+					.print("Introduce el nuevo nombre (Enter para mantener): ");
 			nuevoNombre = sc.nextLine().trim();
 
 			if (nuevoNombre.isEmpty()) {
@@ -360,7 +338,7 @@ public class EspectaculoService {
 
 			if (nuevoNombre.length() > 25) {
 				System.out.println(
-								"❌ El nombre no puede superar 25 caracteres. Inténtalo de"
+						"❌ El nombre no puede superar 25 caracteres. Inténtalo de"
 								+ "nuevo.");
 			} else {
 				seleccionado.setNombre(nuevoNombre);
@@ -376,7 +354,7 @@ public class EspectaculoService {
 
 		if (nuevaFin.isBefore(nuevaInicio)) {
 			System.out.println(
-							"❌ La fecha de fin debe ser posterior a la de inicio.");
+					"❌ La fecha de fin debe ser posterior a la de inicio.");
 
 			return;
 		}
@@ -393,12 +371,13 @@ public class EspectaculoService {
 					break;
 				}
 				System.out.println(
-								"❌ Entrada no válida. Por favor, escribe 'S' o 'N'.");
+						"❌ Entrada no válida. Por favor, escribe 'S' o 'N'.");
 			}
 			if (resp.equals("S")) {
 				Coordinacion nuevoCoord = seleccionarCoordinador();
 				if (nuevoCoord != null) {
-					seleccionado.setCoordinacion(nuevoCoord);
+					
+					//seleccionado.set(coordinadorSeleccionado);
 				} else {
 					System.out.println("⚠ No se cambió el coordinador.");
 				}
@@ -410,12 +389,12 @@ public class EspectaculoService {
 		// guardar
 		// pero queria personalizar los mensajes de salida.
 		try (ObjectOutputStream oos = new ObjectOutputStream(
-						new FileOutputStream(RUTA))) {
+				new FileOutputStream(RUTA))) {
 			oos.writeObject(espectaculos);
 			System.out.println("✅ Espectáculo modificado correctamente.");
 		} catch (IOException e) {
-			System.out.println("❌ Error al guardar los cambios: "
-							+ e.getMessage());
+			System.out.println(
+					"❌ Error al guardar los cambios: " + e.getMessage());
 		}
 	}
 }

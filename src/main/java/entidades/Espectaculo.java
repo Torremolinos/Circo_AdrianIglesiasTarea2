@@ -16,23 +16,23 @@ public class Espectaculo {
 	private String nombre;
 	private LocalDate fechaini;
 	private LocalDate fechafin;
-
 	private LinkedHashSet<Numero> numeros;
-	private Coordinacion coordinacion;
+	private Long id_coordinacion;
 
 	public Espectaculo() {
 		super();
 	}
 
-	public Espectaculo(Long id, String nombre, LocalDate fechaini, LocalDate fechafin, LinkedHashSet<Numero> numeros,
-			Coordinacion coordinacion) {
+	public Espectaculo(Long id, String nombre, LocalDate fechaini,
+			LocalDate fechafin, LinkedHashSet<Numero> numeros,
+			Long id_coordinacion) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.fechaini = fechaini;
 		this.fechafin = fechafin;
 		this.numeros = numeros;
-		this.coordinacion = coordinacion;
+		this.id_coordinacion = id_coordinacion;
 	}
 
 	public Long getId() {
@@ -75,19 +75,12 @@ public class Espectaculo {
 		this.numeros = numeros;
 	}
 
-	public Coordinacion getCoordinacion() {
-		return coordinacion;
+	public Long getId_coordinacion() {
+		return id_coordinacion;
 	}
 
-	public void setCoordinacion(Coordinacion coordinacion) {
-		this.coordinacion = coordinacion;
-	}
-
-	public void setIdCoordinacion(Long id) {
-	    if (this.coordinacion == null) {
-	        this.coordinacion = new Coordinacion();
-	    }
-	    this.coordinacion.setIdCoord(id);
+	public void setId_coordinacion(Long id_coordinacion) {
+		this.id_coordinacion = id_coordinacion;
 	}
 
 }
