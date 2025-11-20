@@ -44,7 +44,7 @@ public class Sesion {
 	}
 	
 
-	public void cerrarSesion(Perfiles perfiles) {
+	public void cerrarSesion() {
 		this.nombre = null;
 		this.perfil = Perfiles.INVITADO;
 	}

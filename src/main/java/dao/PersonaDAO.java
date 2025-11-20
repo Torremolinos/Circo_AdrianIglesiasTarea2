@@ -15,9 +15,9 @@ public class PersonaDAO {
 
 	private Connection connection;
 
-	public void buscarEmail(String email) {
+	public void buscarPersonaNombreEmail(String email) {
 
-		String consulta = "SELECT * FROM persona WHERE email =?";
+		String consulta = "SELECT * FROM persona WHERE nombre =? && email =?";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement(consulta);
@@ -48,5 +48,6 @@ public class PersonaDAO {
 
 	}
 
+	
 	
 }
