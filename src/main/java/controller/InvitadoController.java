@@ -10,12 +10,13 @@ import views.MenuInvitado;
 
 public class InvitadoController {
 
-	static Config config = new Config();
+/*	static Config config = new Config();
 	public static String ruta = config.getProperty("credenciales");
 	MenuInvitado menuInvitado = new MenuInvitado();
 	Sesion sesion = new Sesion(null, Perfiles.INVITADO);
 	CredencialesDAO credencialesDAO = new CredencialesDAO();
-
+	CredencialesService credencialesService = new CredencialesService();
+	Credenciales credencialesUsuario;
 
 	public void iniciar() {
 		boolean salir = false;
@@ -28,18 +29,18 @@ public class InvitadoController {
 			case 1:
 				String usuario = menuInvitado.pedirUsuario();
 				String password = menuInvitado.pedirPassword();
-                //TODO
-				/*boolean login = CredencialesService.login(usuario, password);
+         
+				credencialesUsuario = credencialesService.login(usuario, password);
 
 				
-				if (!login) {
+				if (null == credencialesUsuario) {
 					menuInvitado.mostrarMensajeErrorUsuarioContrasenia();
 				} else {
-					menuInvitado.mostrarMensajeSesionIniciada(sesion.getPerfil);
-					// tengo que poner un metodo para cmaibar de menu segun perfil
+					menuInvitado.mostrarMensajeSesionIniciada(credencialesUsuario.getPerfil());
+					// tengo que poner un metodo para cambiar de menu segun perfil
 				}
 				break;
-*/
+
 			case 2:
 				//espectaculoService.mostrarEspectaculosBasicos();
 				break;
@@ -55,28 +56,6 @@ public class InvitadoController {
 			}
 		}
 		
-	}
-	
-	public void logout() {}
-	
-	
-	
-	/*public static Credenciales login(String usuarioBuscado,
-			String passwordBuscada) {
-		
-		String adminUser = config.getProperty("useradmin");
-		String adminPass = config.getProperty("passadmin");
+	}*/
 
-		if (usuarioBuscado.equals(adminUser)
-				&& passwordBuscada.equals(adminPass)) {
-			/*Aqui tenemos que crear un metodo que busque con credencialesDao
-			 * y contraste con un admin*/
-		//	return new Credenciales(0L, adminUser, adminPass, Perfiles.ADMIN);
-		//}
-
-		/*Aqui otro metodo, el loing que busque en sql el usuaro y la password y nos devuelva al ususario enconcreto
-		 * creando un nuevo Credneciales (lo tenog en CredencialesService hay que mirar como meter el Dao y avanzar.*/
-	//	return buscarUsuarioYPassword(usuarioBuscado, passwordBuscada);
-//	}
-	
 }

@@ -10,99 +10,80 @@ package service;
 import java.util.Scanner;
 
 import entidades.Sesion;
+import views.MenuInvitado;
 import entidades.Credenciales;
-
+import entidades.Perfiles;
 
 public class MenuService {
 
 	private Sesion sesion;
 
-	public MenuService(Sesion sesion) {
-		this.sesion = sesion;
+	public MenuService() {
+		this.sesion = new Sesion(null, Perfiles.INVITADO);
 	}
 
 	/**
-	 * Este metodo gestiona el menu invitado, nos muestras su menu con las
-	 * funciones accesibles.
+	 * Este metodo gestiona el menu invitado, nos muestras su menu con las funciones
+	 * accesibles.
 	 * 
 	 * @return
 	 */
 
 	private boolean menuInvitado() {
-		SesionActiva();
-		EspectaculoService espectaculo = new EspectaculoService();
-		boolean comprobador = true;
-		Scanner usuario = new Scanner(System.in);
-		String entrada;
-		int eleccion = -1;
 
-		do {
-			System.out.println("Bienvenido " + sesion.getPerfil());
-			System.out.println("🎪 Te damos la bienvenida a nuestro Circo 🎪 ");
-			System.out.println(
-					"Tienes que elegir una de las opciones para continuar : ");
-			System.out.println("1.Iniciar sesión");
-			System.out.println("2.Ver espectaculos");
-			System.out.println("3.Salir");
+		EspectaculoService espectaculoService = new EspectaculoService();
+		MenuInvitado vistaMenuInvitado = new MenuInvitado();
+		boolean seguirEnPrograma = true;
+		boolean seguirEnMenu = true;
+		int eleccion;
 
-			entrada = usuario.nextLine().trim();
-			try {
-				eleccion = Integer.parseInt(entrada);
-			} catch (NumberFormatException e) {
-				System.out.println("⚠️ Debes introducir un número");
-				System.out.println();
+		while (seguirEnMenu) {
+			SesionActiva();
+			eleccion = vistaMenuInvitado.menuInvitado(sesion.getPerfil().name());
 
-				continue;
-			}
 			switch (eleccion) {
 			case 1:
-				System.out
-						.println("Introduce tu nombre de usuario, por favor: ");
-				String credencialUsuario = usuario.nextLine().trim();
-
-				System.out.println("Introduce tu contraseña por favor: ");
-				String credencalPassword = usuario.nextLine().trim();
-
-			/*	Credenciales credencialesUsuario = CredencialesService
-						.login(credencialUsuario,
-								credencalPassword);
+				CredencialesService credencialesService = new CredencialesService();
+				String usuario = vistaMenuInvitado.pedirUsuario();
+				String password = vistaMenuInvitado.pedirPassword();
+				Credenciales credencialesUsuario = credencialesService.login(usuario, password);
 
 				if (credencialesUsuario != null) {
-					System.out.println("✅ Inicio de sesión correcto.");
-					sesion.iniciarSesion(credencialesUsuario.getNombre(),
-							credencialesUsuario.getPerfil());
+					System.out.println(" Inicio correcto ");
 
-					iniciarPrograma(sesion);
-					comprobador = false;
+					sesion.iniciarSesion(credencialesUsuario.getNombre(), credencialesUsuario.getPerfil());
+
+					seguirEnMenu = false;
+					seguirEnPrograma = true;
+
 				} else {
-					System.out.println(
-							"❌ Usuario o contraseña incorrectos. Intentalo de nuevo.");
-				}*/
+					System.out.println("Usuario o contraseña incorrectos. Intentalo de nuevo.");
+				}
+
 				break;
 
 			case 2:
-				espectaculo.mostrarInformeBasico(sesion.getPerfil());
+				espectaculoService.mostrarInformeBasico();
 				break;
 
 			case 3:
-				System.out.println(
-						"¡Gracias por tu visita esperamos verte pronto!");
-				comprobador = false;
-				return false;
+				System.out.println("Gracias por tu visita, ¡cuidate!");
+				seguirEnMenu = false;
+				seguirEnPrograma = false;
+				break;
 
 			default:
-				System.out.println(
-						"❌ La opcion marcada es incorrecta, por favor intentalo de nuevo.");
+				System.out.println("❌ La opción marcada es incorrecta, por favor inténtalo de nuevo.");
 				break;
 			}
-		} while (comprobador);
-		return false;
+		}
+        return seguirEnPrograma;
 	}
 
 	/**
-	 * Este metodo gestiona el menuAdmin, dandonos acceso a las diferentes
-	 * acciones o funcionalidades que puede acceder el admin. Tambien hay partes
-	 * del menu en construccion a futuras mejoras.
+	 * Este metodo gestiona el menuAdmin, dandonos acceso a las diferentes acciones
+	 * o funcionalidades que puede acceder el admin. Tambien hay partes del menu en
+	 * construccion a futuras mejoras.
 	 * 
 	 * @return
 	 */
@@ -118,18 +99,15 @@ public class MenuService {
 		String entrada;
 		int eleccion = -1;
 		do {
-			System.out.println("\n===(͠≖ ͜ʖ͠≖) MENÚ " + sesion.getPerfil()
-					+ " (͠≖ ͜ʖ͠≖)===");
+			System.out.println("\n===(͠≖ ͜ʖ͠≖) MENÚ " + sesion.getPerfil() + " (͠≖ ͜ʖ͠≖)===");
 			System.out.println("🎪Bienvenido " + sesion.getNombre());
-			System.out.println(
-					"Tienes que elegir una de las opciones para continuar : ");
+			System.out.println("Tienes que elegir una de las opciones para continuar : ");
 			System.out.println("1.Ver espectáculo");
 			System.out.println("2.Registrar Usuarios");
 			System.out.println("3.Crear espectáculos");
 			System.out.println("4.Modificar espectáculos");
 			System.out.println("5.Asignar perfil y credenciales");
-			System.out
-					.println("6.Gestionar datos de Artistas y de Coordinacion");
+			System.out.println("6.Gestionar datos de Artistas y de Coordinacion");
 			System.out.println("7.Ver datos de espectáculo completo");
 			System.out.println("8.Ver ficha");
 			System.out.println("9.Log out");
@@ -147,11 +125,12 @@ public class MenuService {
 
 			switch (eleccion) {
 			case 1:
-				espectaculo.mostrarInformeBasico(sesion.getPerfil());
+				espectaculo.mostrarInformeBasico();
 				break;
 
 			case 2:
-				credenciales = CredencialesService.crearNuevaCredencial();
+				
+				/*credenciales = CredencialesService.crearNuevaCredencial();*/
 				break;
 
 			case 3:
@@ -192,20 +171,18 @@ public class MenuService {
 					switch (eleccionSalida) {
 					case "s":
 						System.out.println("Saliendo al menú principal...");
-						sesion.cerrarSesion();
-						this.iniciarPrograma(sesion);
+						/*sesion.cerrarSesion();
+						this.iniciarPrograma(sesion);*/
 						comprobador = false;
 						return true;
 
 					case "n":
-						System.out.println(
-								"Operación cancelada. Volviendo al menú...");
+						System.out.println("Operación cancelada. Volviendo al menú...");
 						confirmarSalida = true;
 						break;
 
 					default:
-						System.out.println(
-								"❌ Opción no válida. Escribe 'S' o 'N'.");
+						System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 						break;
 					}
 				}
@@ -223,28 +200,25 @@ public class MenuService {
 					switch (eleccionSalida) {
 					case "s":
 						System.out.println("Saliendo al menú principal...");
-						sesion.cerrarSesion();
-						this.iniciarPrograma(sesion);
+					/*	sesion.cerrarSesion();
+						this.iniciarPrograma(sesion);*/
 						comprobador = false;
 						return true;
 
 					case "n":
-						System.out.println(
-								"Operación cancelada. Volviendo al menú...");
+						System.out.println("Operación cancelada. Volviendo al menú...");
 						confirmarSalida = true;
 						break;
 
 					default:
-						System.out.println(
-								"❌ Opción no válida. Escribe 'S' o 'N'.");
+						System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 						break;
 					}
 				}
 				break;
 
 			default:
-				System.out.println(
-						"❌ La opcion marcada es incorrecta, por favor intentalo de nuevo.");
+				System.out.println("❌ La opcion marcada es incorrecta, por favor intentalo de nuevo.");
 				break;
 			}
 		} while (comprobador);
@@ -258,7 +232,7 @@ public class MenuService {
 	 * @return
 	 */
 
-	private boolean menuCoordinador() {
+	private boolean menuCoordinacion() {
 		boolean confirmarSalida = false;
 		SesionActiva();
 		EspectaculoService espectaculo = new EspectaculoService();
@@ -269,8 +243,7 @@ public class MenuService {
 		int eleccion = -1;
 
 		do {
-			System.out
-					.println("\n=== 🎪 MENÚ " + sesion.getPerfil() + " 🎪 ===");
+			System.out.println("\n=== 🎪 MENÚ " + sesion.getPerfil() + " 🎪 ===");
 			System.out.println("Bienvenido/a, " + sesion.getNombre());
 			System.out.println("Elige una opción:");
 			System.out.println("1. Ver espectáculos");
@@ -289,7 +262,7 @@ public class MenuService {
 
 			switch (eleccion) {
 			case 1:
-				espectaculo.mostrarInformeBasico(sesion.getPerfil());
+			/*	espectaculo.mostrarInformeBasico(sesion.getPerfil());*/
 				break;
 			case 2:
 				EspectaculoService.crearEspectaculo(sesion, sesion.getPerfil());
@@ -301,26 +274,23 @@ public class MenuService {
 				confirmarSalida = false;
 				while (!confirmarSalida) {
 					System.out.println("¿Seguro que quieres cerrar sesión?");
-					System.out.println(
-							"Pulsa S para cerrar sesión o N para cancelar:");
+					System.out.println("Pulsa S para cerrar sesión o N para cancelar:");
 
 					eleccionSalida = sc.nextLine().trim().toLowerCase();
 
 					switch (eleccionSalida) {
 					case "s":
 						System.out.println("Cerrando sesión...");
-						sesion.cerrarSesion();
-						this.iniciarPrograma(sesion);
+				/*		sesion.cerrarSesion();
+						this.iniciarPrograma(sesion);*/
 						comprobador = false;
 						return true;
 					case "n":
-						System.out.println(
-								"Operación cancelada. Sigues en la sesión actual.");
+						System.out.println("Operación cancelada. Sigues en la sesión actual.");
 						confirmarSalida = true;
 						break;
 					default:
-						System.out.println(
-								"❌ Opción no válida. Escribe 'S' o 'N'.");
+						System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 						break;
 					}
 				}
@@ -328,8 +298,7 @@ public class MenuService {
 			case 5:
 				confirmarSalida = false;
 				while (!confirmarSalida) {
-					System.out
-							.println("¿Seguro que quieres salir del programa?");
+					System.out.println("¿Seguro que quieres salir del programa?");
 					System.out.println("Pulsa S para salir o N para cancelar:");
 
 					eleccionSalida = sc.nextLine().trim().toLowerCase();
@@ -340,13 +309,11 @@ public class MenuService {
 						comprobador = false;
 						return false;
 					case "n":
-						System.out.println(
-								"Operación cancelada. Volviendo al menú...");
+						System.out.println("Operación cancelada. Volviendo al menú...");
 						confirmarSalida = true;
 						break;
 					default:
-						System.out.println(
-								"❌ Opción no válida. Escribe 'S' o 'N'.");
+						System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 						break;
 					}
 				}
@@ -359,8 +326,8 @@ public class MenuService {
 	}
 
 	/**
-	 * Este metodo nos permite acceder al menu artista para gestionar sus
-	 * diferentes funciones.
+	 * Este metodo nos permite acceder al menu artista para gestionar sus diferentes
+	 * funciones.
 	 * 
 	 * @return
 	 */
@@ -374,8 +341,7 @@ public class MenuService {
 		int eleccion = -1;
 
 		do {
-			System.out
-					.println("\n=== 🎨 MENÚ " + sesion.getPerfil() + " 🎨 ===");
+			System.out.println("\n=== 🎨 MENÚ " + sesion.getPerfil() + " 🎨 ===");
 			System.out.println("Bienvenido/a, " + sesion.getNombre());
 			System.out.println("Selecciona una opción:");
 			System.out.println("1. Ver espectáculos disponibles");
@@ -394,7 +360,7 @@ public class MenuService {
 			switch (eleccion) {
 			case 1:
 				EspectaculoService espectaculo = new EspectaculoService();
-				espectaculo.mostrarInformeBasico(sesion.getPerfil());
+			/*	espectaculo.mostrarInformeBasico(sesion.getPerfil());*/
 				break;
 			case 2:
 				System.out.println("=== Ver mi ficha personal ===");
@@ -404,28 +370,25 @@ public class MenuService {
 				confirmarSalida = false;
 				while (!confirmarSalida) {
 					System.out.println("¿Seguro que deseas cerrar sesión?");
-					System.out.println(
-							"Pulsa S para cerrar sesión o N para cancelar:");
+					System.out.println("Pulsa S para cerrar sesión o N para cancelar:");
 					eleccionSalida = sc.nextLine().toLowerCase().trim();
 
 					switch (eleccionSalida) {
 					case "s":
 						System.out.println("Cerrando sesión...");
-						sesion.cerrarSesion();
-						this.iniciarPrograma(sesion);
+				/*		sesion.cerrarSesion();
+						this.iniciarPrograma(sesion);*/
 						comprobador = false;
 						confirmarSalida = true;
 						break;
 
 					case "n":
-						System.out.println(
-								"Operación cancelada. Volviendo al menú...");
+						System.out.println("Operación cancelada. Volviendo al menú...");
 						confirmarSalida = true;
 						break;
 
 					default:
-						System.out.println(
-								"❌ Opción no válida. Escribe 'S' o 'N'.");
+						System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 						break;
 					}
 				}
@@ -434,8 +397,7 @@ public class MenuService {
 			case 4:
 				confirmarSalida = false;
 				while (!confirmarSalida) {
-					System.out
-							.println("¿Seguro que deseas salir del programa?");
+					System.out.println("¿Seguro que deseas salir del programa?");
 					System.out.println("Pulsa S para salir o N para cancelar:");
 					eleccionSalida = sc.nextLine().toLowerCase().trim();
 
@@ -446,14 +408,12 @@ public class MenuService {
 						return false;
 
 					case "n":
-						System.out.println(
-								"Operación cancelada. Volviendo al menú...");
+						System.out.println("Operación cancelada. Volviendo al menú...");
 						confirmarSalida = true;
 						break;
 
 					default:
-						System.out.println(
-								"❌ Opción no válida. Escribe 'S' o 'N'.");
+						System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 						break;
 					}
 				}
@@ -467,25 +427,31 @@ public class MenuService {
 	}
 
 	/**
-	 * Metodo que iniciar el programa con el menu correspondiente al perfil que
-	 * se pase como atributo.
+	 * Iniciamos el programa, con la sesion correspondiente, de ella capturamos el
+	 * Perfil y elegimos el menu concorde a ese Perfil. Nuestro perfil pasara un
+	 * True, mientras nuestro menu tenga ese valor siempre estará activo.
 	 * 
 	 * @param perfil
 	 * @return
 	 */
-	public boolean iniciarPrograma(Sesion perfil) {
-		switch (perfil.getPerfil()) {
+	public boolean iniciarPrograma() {
+
+		if (!SesionActiva()) {
+			return false;
+		}
+
+		switch (sesion.getPerfil()) {
 		case INVITADO:
 			return menuInvitado();
 		case ADMIN:
 			return menuAdmin();
 		case ARTISTA:
 			return menuArtista();
-		case COORDINADOR:
-			return menuCoordinador();
+		case COORDINACION:
+			return menuCoordinacion();
 		default:
 			System.out.println("Perfil no existente.");
-			return true;
+			return false;
 		}
 	}
 
@@ -497,12 +463,19 @@ public class MenuService {
 	 */
 	public boolean SesionActiva() {
 		System.out.println("Sesión activa: " + sesion.getPerfil());
+		/* para Utils? */
 		if (this.sesion == null || this.sesion.getPerfil() == null) {
-			System.out.println(
-					"⚠️ No hay sesión activa. Por favor, inicia sesión primero.");
+			System.out.println("⚠️ No hay sesión activa. Por favor, inicia sesión primero.");
 			return false;
 		}
 		return true;
 	}
-}
 
+	public void iniciarAplicacion() {
+		boolean aplicacionIniciada = true;
+		while (aplicacionIniciada) {
+			aplicacionIniciada = iniciarPrograma();
+		}
+		System.out.println("Programa finalizado. 👋");
+	}
+}

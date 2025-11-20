@@ -28,25 +28,19 @@ public class CredencialesService {
 
 	static Config config = new Config();
 	public static String ruta = config.getProperty("credenciales");
+	CredencialesDAO credencialesDAO = new CredencialesDAO();
 
 	public Credenciales login(String nombre, String password) {
 
 		String adminUser = config.getProperty("useradmin");
 		String adminPass = config.getProperty("passadmin");
 
+		
 		if (nombre.equals(adminUser) && password.equals(adminPass)) {
 			Credenciales adminCredenciales = new Credenciales("admin", "admin", Perfiles.ADMIN);
 			return adminCredenciales;
 		}
-
-		return buscarUsuario(nombre, password);
-	}
-	
-
-	private Credenciales buscarUsuario(String nombre, String password) {
-		CredencialesDAO credencialesDAO = new CredencialesDAO();
 		return credencialesDAO.buscarUsuario(nombre, password);
-
 	}
 
 	/**
@@ -54,216 +48,141 @@ public class CredencialesService {
 	 * 
 	 * @return @Credenciales
 	 */
-	
-	//TODO
 
-	/*public static Credenciales crearNuevaCredencial(String usuario, String password, String email,
-			String nombrecompleto, String pais) {
-		Scanner sc = new Scanner(System.in);
-		Perfiles perfil = null;
+	// TODO
 
-	/*	do {
-			if (usuario.isEmpty()) {
-				System.out.println("❌ El nombre de usuario no puede estar vacío.");
-				continue;
-			}
-
-			if (!usuario.matches("^[a-z]{3,}$")) {
-				System.out
-						.println("❌ El usuario debe tener al menos 3 letras y no puede contener espacios ni acentos.");
-				continue;
-			}
-
-			if (existeUsuarioOEmail(usuario, "")) {
-				System.out.println("❌ El nombre de usuario ya existe en el sistema.");
-				continue;
-			}
-
-			break;
-		} while (true);
-
-		do {
-			System.out.print("Introduce contraseña (mínimo 4 caracteres, sin espacios): ");
-			password = sc.nextLine().trim();
-
-			if (password.isEmpty()) {
-				System.out.println("❌ La contraseña no puede estar vacía.");
-				continue;
-			}
-
-			if (password.contains(" ")) {
-				System.out.println("❌ La contraseña no puede contener espacios.");
-				continue;
-			}
-
-			if (password.length() < 4) {
-				System.out.println("❌ La contraseña debe tener al menos 4 caracteres.");
-				continue;
-			}
-
-			break;
-		} while (true);
-		do {
-			System.out.print("Introduce email válido: ");
-			email = sc.nextLine().trim();
-
-			if (email.isEmpty()) {
-				System.out.println("❌ El email no puede estar vacío.");
-				continue;
-			}
-
-			if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-				System.out.println("❌ El formato de email no es válido (ejemplo: nombre@dominio.com).");
-				continue;
-			}
-
-			if (existeUsuarioOEmail("", email)) {
-				System.out.println("❌ El email ya existe en el sistema.");
-				continue;
-			}
-
-			break;
-		} while (true);
-
-		do {
-			System.out.print("Introduce nombre completo (solo letras y espacios): ");
-			nombreCompleto = sc.nextLine().trim();
-
-			if (nombreCompleto.isEmpty()) {
-				System.out.println("❌ El nombre no puede estar vacío.");
-				continue;
-			}
-
-			if (!nombreCompleto.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")) {
-				System.out.println("❌ El nombre solo puede contener letras y espacios.");
-				continue;
-			}
-
-			break;
-		} while (true);
-
-		if (existeUsuarioOEmail(usuario, email)) {
-			System.out.println("❌ Ya existe un usuario o email igual en el sistema.");
-
-			return null;
-		}
-
-		PaisService paisService = new PaisService();
-		Map<String, String> paises = paisService.obtenerTodosLosPaises();
-		if (paises == null || paises.isEmpty()) {
-			System.out.println("❌ No se pudieron cargar los países desde el XML.");
-
-			return null;
-		}
-
-		System.out.println("Países disponibles:");
-		paises.forEach((codigo, nombre) -> System.out.println(codigo + " - " + nombre));
-
-		String codigoPais = "";
-
-		do {
-			System.out.print("Introduce el código del país: ");
-			codigoPais = sc.nextLine().trim().toUpperCase();
-			if (!paises.containsKey(codigoPais)) {
-				System.out.println("Código inválido, prueba otra vez.");
-			}
-		} while (!paises.containsKey(codigoPais));
-
-		pais = paises.get(codigoPais);
-		System.out.println("Has seleccionado: " + pais);
-
-		int opcionPerfil = -1;
-		do {
-			System.out.println("Selecciona perfil:");
-			System.out.println("1. COORDINACION");
-			System.out.println("2. ARTISTA");
-			System.out.print("Opción: ");
-
-			String perfilElegido = sc.nextLine().trim();
-			try {
-				opcionPerfil = Integer.parseInt(perfilElegido);
-			} catch (NumberFormatException e) {
-				opcionPerfil = -1;
-			}
-
-			switch (opcionPerfil) {
-			case 1:
-				perfil = Perfiles.COORDINADOR;
-				System.out.println("¿Es senior?");
-				boolean esSenior = Utilidades.leerBoolean();
-				Date fechaSenior = null;
-				if (esSenior) {
-					fechaSenior = Utilidades.leerFecha();
-				}
-				break;
-
-			case 2:
-				perfil = Perfiles.ARTISTA;
-				Especialidades especialidadSeleccionada = null;
-				boolean especialidadValida = false;
-
-				while (!especialidadValida) {
-					System.out.println("Elige una especialidad:");
-					System.out.println("1. ACROBACIA");
-					System.out.println("2. HUMOR");
-					System.out.println("3. MAGIA");
-					System.out.println("4. EQUILIBRISMO");
-					System.out.println("5. MALABARISMO");
-					System.out.print("Opción: ");
-
-					int opcion = -1;
-					try {
-						opcion = Integer.parseInt(sc.nextLine().trim());
-					} catch (NumberFormatException e) {
-						System.out.println("❌ Debes introducir un número válido (1–5).");
-						continue;
-					}
-
-					switch (opcion) {
-					case 1:
-						especialidadSeleccionada = Especialidades.ACROBACIA;
-						especialidadValida = true;
-						break;
-					case 2:
-						especialidadSeleccionada = Especialidades.HUMOR;
-						especialidadValida = true;
-						break;
-					case 3:
-						especialidadSeleccionada = Especialidades.MAGIA;
-						especialidadValida = true;
-						break;
-					case 4:
-						especialidadSeleccionada = Especialidades.EQUILIBRISMO;
-						especialidadValida = true;
-						break;
-					case 5:
-						especialidadSeleccionada = Especialidades.MALABARISMO;
-						especialidadValida = true;
-						break;
-					default:
-						System.out.println("❌ Opción inválida. Intenta de nuevo.");
-						break;
-					}
-				}
-				break;
-			default:
-				System.out.println("❌ Opción no válida, prueba otra vez.");
-				break;
-			}
-
-		} while (opcionPerfil < 1 || opcionPerfil > 2);
-		return null;
-
-		// Credenciales nueva = new Credenciales(null, usuario, password, perfil);
-
-		// registrarUsuario(nueva, email, nombreCompleto, pais);
-
-		// return nueva;
-		///
-		///
-		///REFACTORIZAR
-		 
-	}*/
+	/*
+	 * public static Credenciales crearNuevaCredencial(String usuario, String
+	 * password, String email, String nombrecompleto, String pais) { Scanner sc =
+	 * new Scanner(System.in); Perfiles perfil = null;
+	 * 
+	 * /* do { if (usuario.isEmpty()) {
+	 * System.out.println("❌ El nombre de usuario no puede estar vacío."); continue;
+	 * }
+	 * 
+	 * if (!usuario.matches("^[a-z]{3,}$")) { System.out
+	 * .println("❌ El usuario debe tener al menos 3 letras y no puede contener espacios ni acentos."
+	 * ); continue; }
+	 * 
+	 * if (existeUsuarioOEmail(usuario, "")) {
+	 * System.out.println("❌ El nombre de usuario ya existe en el sistema.");
+	 * continue; }
+	 * 
+	 * break; } while (true);
+	 * 
+	 * do {
+	 * System.out.print("Introduce contraseña (mínimo 4 caracteres, sin espacios): "
+	 * ); password = sc.nextLine().trim();
+	 * 
+	 * if (password.isEmpty()) {
+	 * System.out.println("❌ La contraseña no puede estar vacía."); continue; }
+	 * 
+	 * if (password.contains(" ")) {
+	 * System.out.println("❌ La contraseña no puede contener espacios."); continue;
+	 * }
+	 * 
+	 * if (password.length() < 4) {
+	 * System.out.println("❌ La contraseña debe tener al menos 4 caracteres.");
+	 * continue; }
+	 * 
+	 * break; } while (true); do { System.out.print("Introduce email válido: ");
+	 * email = sc.nextLine().trim();
+	 * 
+	 * if (email.isEmpty()) {
+	 * System.out.println("❌ El email no puede estar vacío."); continue; }
+	 * 
+	 * if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) { System.out.
+	 * println("❌ El formato de email no es válido (ejemplo: nombre@dominio.com).");
+	 * continue; }
+	 * 
+	 * if (existeUsuarioOEmail("", email)) {
+	 * System.out.println("❌ El email ya existe en el sistema."); continue; }
+	 * 
+	 * break; } while (true);
+	 * 
+	 * do {
+	 * System.out.print("Introduce nombre completo (solo letras y espacios): ");
+	 * nombreCompleto = sc.nextLine().trim();
+	 * 
+	 * if (nombreCompleto.isEmpty()) {
+	 * System.out.println("❌ El nombre no puede estar vacío."); continue; }
+	 * 
+	 * if (!nombreCompleto.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")) {
+	 * System.out.println("❌ El nombre solo puede contener letras y espacios.");
+	 * continue; }
+	 * 
+	 * break; } while (true);
+	 * 
+	 * if (existeUsuarioOEmail(usuario, email)) {
+	 * System.out.println("❌ Ya existe un usuario o email igual en el sistema.");
+	 * 
+	 * return null; }
+	 * 
+	 * PaisService paisService = new PaisService(); Map<String, String> paises =
+	 * paisService.obtenerTodosLosPaises(); if (paises == null || paises.isEmpty())
+	 * { System.out.println("❌ No se pudieron cargar los países desde el XML.");
+	 * 
+	 * return null; }
+	 * 
+	 * System.out.println("Países disponibles:"); paises.forEach((codigo, nombre) ->
+	 * System.out.println(codigo + " - " + nombre));
+	 * 
+	 * String codigoPais = "";
+	 * 
+	 * do { System.out.print("Introduce el código del país: "); codigoPais =
+	 * sc.nextLine().trim().toUpperCase(); if (!paises.containsKey(codigoPais)) {
+	 * System.out.println("Código inválido, prueba otra vez."); } } while
+	 * (!paises.containsKey(codigoPais));
+	 * 
+	 * pais = paises.get(codigoPais); System.out.println("Has seleccionado: " +
+	 * pais);
+	 * 
+	 * int opcionPerfil = -1; do { System.out.println("Selecciona perfil:");
+	 * System.out.println("1. COORDINACION"); System.out.println("2. ARTISTA");
+	 * System.out.print("Opción: ");
+	 * 
+	 * String perfilElegido = sc.nextLine().trim(); try { opcionPerfil =
+	 * Integer.parseInt(perfilElegido); } catch (NumberFormatException e) {
+	 * opcionPerfil = -1; }
+	 * 
+	 * switch (opcionPerfil) { case 1: perfil = Perfiles.COORDINADOR;
+	 * System.out.println("¿Es senior?"); boolean esSenior =
+	 * Utilidades.leerBoolean(); Date fechaSenior = null; if (esSenior) {
+	 * fechaSenior = Utilidades.leerFecha(); } break;
+	 * 
+	 * case 2: perfil = Perfiles.ARTISTA; Especialidades especialidadSeleccionada =
+	 * null; boolean especialidadValida = false;
+	 * 
+	 * while (!especialidadValida) { System.out.println("Elige una especialidad:");
+	 * System.out.println("1. ACROBACIA"); System.out.println("2. HUMOR");
+	 * System.out.println("3. MAGIA"); System.out.println("4. EQUILIBRISMO");
+	 * System.out.println("5. MALABARISMO"); System.out.print("Opción: ");
+	 * 
+	 * int opcion = -1; try { opcion = Integer.parseInt(sc.nextLine().trim()); }
+	 * catch (NumberFormatException e) {
+	 * System.out.println("❌ Debes introducir un número válido (1–5)."); continue; }
+	 * 
+	 * switch (opcion) { case 1: especialidadSeleccionada =
+	 * Especialidades.ACROBACIA; especialidadValida = true; break; case 2:
+	 * especialidadSeleccionada = Especialidades.HUMOR; especialidadValida = true;
+	 * break; case 3: especialidadSeleccionada = Especialidades.MAGIA;
+	 * especialidadValida = true; break; case 4: especialidadSeleccionada =
+	 * Especialidades.EQUILIBRISMO; especialidadValida = true; break; case 5:
+	 * especialidadSeleccionada = Especialidades.MALABARISMO; especialidadValida =
+	 * true; break; default:
+	 * System.out.println("❌ Opción inválida. Intenta de nuevo."); break; } } break;
+	 * default: System.out.println("❌ Opción no válida, prueba otra vez."); break; }
+	 * 
+	 * } while (opcionPerfil < 1 || opcionPerfil > 2); return null;
+	 * 
+	 * // Credenciales nueva = new Credenciales(null, usuario, password, perfil);
+	 * 
+	 * // registrarUsuario(nueva, email, nombreCompleto, pais);
+	 * 
+	 * // return nueva; /// /// ///REFACTORIZAR
+	 * 
+	 * }
+	 */
 
 	/**
 	 * En este metodo registramos al usuario, pasandole las credenciales,el email,

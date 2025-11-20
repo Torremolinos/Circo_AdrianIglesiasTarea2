@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import dao.EspectaculoDAO;
 import entidades.Coordinacion;
 import entidades.Espectaculo;
 import entidades.Perfiles;
@@ -87,20 +88,27 @@ public class EspectaculoService {
 	}
 
 	/**
-	 * Aqui mostramos el menu de los espectaculos, en función a tu perfil el
-	 * cual nos viene de parametros, seleccionamos el nivel del menu a ver en
-	 * este caso todos tienen el mismo nivel.
+	 * Esta función muestra un informe básico para los invitados
+	 * muestra el id, nombre, fechainicio y fechafin.
 	 * 
-	 * @param perfil
+	 * 
 	 */
-	public void mostrarInformeBasico(Perfiles perfil) {
-		LinkedHashSet<Espectaculo> espectaculos = listaEspectaculos();
+	public void mostrarInformeBasico() {
+		EspectaculoDAO dao = new EspectaculoDAO();
+		LinkedHashSet<Espectaculo> espectaculos = new LinkedHashSet<Espectaculo>();
+		espectaculos = dao.listaEspectaculos();
 		if (espectaculos.isEmpty()) {
 			System.out.println("No hay espectáculos para mostrar.");
 			return;
 		}
-
-		switch (perfil) {
+		for (Espectaculo e : espectaculos) {
+		    System.out.println(e.getId() + " - " + e.getNombre() + 
+		                       " (" + e.getFechaini() + " a " + e.getFechafin() + ")");
+		    }
+		
+		
+		
+		/*switch (perfil) {
 		case INVITADO:
 			System.out.println("INFORME DE ESPECTÁCULOS");
 			System.out.println("---------------------------");
@@ -147,7 +155,7 @@ public class EspectaculoService {
 			break;
 		default:
 			break;
-		}
+		}*/
 
 	}
 
@@ -205,7 +213,7 @@ public class EspectaculoService {
 		}
 
 		
-		if (perfilUsuario == Perfiles.COORDINADOR) {
+		if (perfilUsuario == Perfiles.COORDINACION) {
 			String nombreCoordinadorSesion=sesion.getNombre();
 			usuarioCoord.setNombre(nombreCoordinadorSesion);
 		} else if (perfilUsuario == Perfiles.ADMIN) {

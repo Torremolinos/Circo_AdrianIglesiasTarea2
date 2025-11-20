@@ -69,11 +69,11 @@ public class MenuAdmin {
 
 			switch (eleccion) {
 			case 1:
-				espectaculo.mostrarInformeBasico(sesion.getPerfil());
+			/*	espectaculo.mostrarInformeBasico(sesion.getPerfil());*/
 				break;
 
 			case 2:
-				credenciales = CredencialesService.crearNuevaCredencial();
+			/*	credenciales = CredencialesService.crearNuevaCredencial();*/
 				break;
 
 			case 3:
@@ -114,8 +114,7 @@ public class MenuAdmin {
 					switch (eleccionSalida) {
 					case "s":
 						System.out.println("Saliendo al menú principal...");
-						sesion.cerrarSesion();
-						//this.iniciarPrograma(sesion);
+					/*	sesion.cerrarSesion();*/
 						comprobador = false;
 						return true;
 
@@ -145,8 +144,7 @@ public class MenuAdmin {
 					switch (eleccionSalida) {
 					case "s":
 						System.out.println("Saliendo al menú principal...");
-						sesion.cerrarSesion();
-					//	this.iniciarPrograma(sesion);
+						//sesion.cerrarSesion();
 						comprobador = false;
 						return true;
 

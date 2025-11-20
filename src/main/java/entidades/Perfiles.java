@@ -8,5 +8,5 @@
 package entidades;
 
 public enum Perfiles {
-	INVITADO, ADMIN, COORDINADOR, ARTISTA
+	INVITADO, ADMIN, COORDINACION, ARTISTA
 }

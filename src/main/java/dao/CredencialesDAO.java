@@ -15,13 +15,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import entidades.Credenciales;
 import entidades.Perfiles;
+import utils.DatabaseConnection;
 
 public class CredencialesDAO {
 
 	private Connection connection;
-	private static final Logger LOGGER = Logger
-					.getLogger(CoordinacionDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CoordinacionDAO.class.getName());
 
+	  public CredencialesDAO() {
+	        this.connection = DatabaseConnection.getInstance().getConnection();
+	    }
+	
 	public Credenciales buscarUsuario(String nombre, String password) {
 		Credenciales credenciales = null;
 		String consulta = "SELECT * FROM credenciales WHERE nombre = ? AND password = ?";
@@ -35,16 +39,11 @@ public class CredencialesDAO {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				credenciales = new Credenciales(rs.getLong("id"),
-								rs.getString("nombre"),
-								rs.getString("password"),
-								rs.getLong("id_persona"),
-								Perfiles.valueOf(rs.getString("perfiles")
-												.toUpperCase()));
+				credenciales = new Credenciales(rs.getLong("id"), rs.getString("nombre"), rs.getString("password"),
+						rs.getLong("id_persona"), Perfiles.valueOf(rs.getString("perfiles").toUpperCase()));
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al consultar usuario y contraseña",
-							e);
+			LOGGER.log(Level.SEVERE, "Error al consultar usuario y contraseña", e);
 		} finally {
 			try {
 				if (rs != null)
@@ -58,7 +57,32 @@ public class CredencialesDAO {
 		return credenciales;
 	}
 
-	public void crearNuevaCredencial() {
+	public Credenciales crearNuevaCredencial() {
+		Credenciales credenciales = null;
+		String consulta = "SELECT * FROM credenciales";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = connection.prepareStatement(consulta);
+			rs = ps.executeQuery();
 
+			if (rs.next()) {
+				credenciales = new Credenciales(rs.getLong("id"), rs.getString("nombre"), rs.getString("password"),
+						rs.getLong("id_persona"), Perfiles.valueOf(rs.getString("perfiles").toUpperCase()));
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error al consultar usuario y contraseña", e);
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (ps != null)
+					ps.close();
+			} catch (SQLException e) {
+				LOGGER.log(Level.WARNING, "Error cerrando recursos", e);
+			}
+		}
+		return credenciales;
 	}
 }

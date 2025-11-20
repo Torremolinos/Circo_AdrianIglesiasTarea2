@@ -9,31 +9,14 @@ package principal;
 
 import java.util.LinkedHashSet;
 
-import controller.InvitadoController;
-import dao.EspectaculoDAO;
-import entidades.Espectaculo;
-import entidades.Perfiles;
+import service.MenuService;
 
 public class Principal {
 
 	public static void main(String[] args) {
 
-	InvitadoController invitadoController = new InvitadoController();
+		MenuService menuService = new MenuService();
+		menuService.iniciarAplicacion();
 
-
-		invitadoController.iniciar();
-		
-		
-		
-		/*Mostras espectaculo*/
-	    EspectaculoDAO dao = new EspectaculoDAO();
-		LinkedHashSet<Espectaculo> espectaculos =EspectaculoDAO.listaEspectaculos();
-
-		for (Espectaculo e : espectaculos) {
-		    System.out.println(e.getId() + " - " + e.getNombre() + 
-		                       " (" + e.getFechaini() + " a " + e.getFechafin() + ")");
-		}
 	}
-
-
 }

@@ -20,20 +20,20 @@ import entidades.Sesion;
 import utils.DatabaseConnection;
 
 public class EspectaculoDAO {
-	private static Connection connection;
+	private final Connection connection;
 
 	public EspectaculoDAO() {
-		// Aquí obtienes la conexión del singleton
 		this.connection = DatabaseConnection.getInstance().getConnection();
 	}
 
-	public static LinkedHashSet<Espectaculo> listaEspectaculos() {
+	public LinkedHashSet<Espectaculo> listaEspectaculos() {
 		LinkedHashSet<Espectaculo> lista = new LinkedHashSet<>();
 		String sql = "SELECT * FROM espectaculo";
-
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			 ps = connection.prepareStatement(sql);
+			 rs = ps.executeQuery();
 			while (rs.next()) {
 				Espectaculo e = new Espectaculo();
 				e.setId(rs.getLong("id"));
@@ -42,13 +42,18 @@ public class EspectaculoDAO {
 				e.setFechafin(rs.getDate("fechafin").toLocalDate());
 				e.setIdCoordinacion(rs.getLong("id_coordinacion"));
 				lista.add(e);
-				
 			}
-			ps.close();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			 try {
+			        if (rs != null) rs.close();
+			        if (ps != null) ps.close();
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			    }
 		}
 		return lista;
 	}
