@@ -41,9 +41,6 @@ El objetivo es aplicar los contenidos de Acceso a Datos y diseñar un sistema mo
 
 📂 java/
 
-📂 controller/
-Control interno del flujo
-
 📂 dao/
 Acceso a datos: ficheros, XML, SQL (JDBC)
 
