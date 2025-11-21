@@ -113,7 +113,7 @@ public class ArtistaDAO {
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
 			ps.setString(1, apodo);
-			ps.setString(2, especialidades);
+			ps.setString(2, especialidades.toLowerCase());
 			ps.setLong(3, idPersona);
 
 			int filas = ps.executeUpdate();

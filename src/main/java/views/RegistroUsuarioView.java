@@ -25,8 +25,7 @@ public class RegistroUsuarioView {
 	}
 
 	public LocalDate pedirFechaSenior() {
-		System.out
-				.println("Introduce la fecha de senior (solo fechas pasadas):");
+		System.out.println("Introduce la fecha de senior :");
 		return Utilidades.leerFechaSenior();
 	}
 
@@ -77,7 +76,6 @@ public class RegistroUsuarioView {
 				System.out.println((i + 1) + ". " + listaPaises.get(i));
 			}
 
-			System.out.print("Introduce el número de tu país: ");
 			int opcion = Utilidades.leerInt();
 
 			if (opcion >= 1 && opcion <= listaPaises.size()) {
@@ -85,7 +83,7 @@ public class RegistroUsuarioView {
 				correcto = true;
 			} else {
 				System.out.println(
-						"❌ Opción no válida. Debes elegir un número entre 1 y "
+						" Opción no válida. Debes elegir un número entre 1 y "
 								+ listaPaises.size() + ".");
 			}
 

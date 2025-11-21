@@ -44,39 +44,14 @@ public class GestionUsuarioView {
 		}
 	}
 
-	public void mostrarSinDatosProfesionales(Perfiles perfil) {
-		System.out.println(
-				" No hay datos profesionales extra que gestionar para el perfil: "
-						+ perfil);
-	}
-
 	public void mostrarSinCoordinacion() {
 		System.out.println(
 				" Esta persona no tiene datos de Coordinación asociados.");
 	}
 
-	public void mostrarResultadoActualizacionCoordinacion(boolean ok) {
-		if (ok) {
-			System.out.println(
-					" Datos de Coordinación actualizados correctamente.");
-		} else {
-			System.out.println(
-					" No se han podido actualizar los datos de Coordinación.");
-		}
-	}
-
 	public void mostrarSinArtista() {
 		System.out
 				.println(" Esta persona no tiene datos de Artista asociados.");
-	}
-
-	public void mostrarResultadoActualizacionArtista(boolean ok) {
-		if (ok) {
-			System.out.println(" Datos de Artista actualizados correctamente.");
-		} else {
-			System.out.println(
-					" No se han podido actualizar los datos de Artista.");
-		}
 	}
 
 	public String pedirNuevoNombre(String nombreActual) {

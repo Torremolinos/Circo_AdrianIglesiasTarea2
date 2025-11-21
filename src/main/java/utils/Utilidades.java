@@ -769,7 +769,7 @@ public class Utilidades {
 
 			System.out.print(
 					"Introduce el código de país (o Enter para mantener el actual): ");
-			String codigo = in.nextLine().trim();
+			String codigo = in.nextLine().trim().toUpperCase();
 
 			if (codigo.isEmpty()) {
 				nuevaNacionalidad = nacionalidadActual;

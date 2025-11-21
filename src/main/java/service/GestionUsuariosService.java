@@ -7,6 +7,8 @@
 
 package service;
 
+import java.time.LocalDate;
+
 import dao.ArtistaDAO;
 import dao.CoordinacionDAO;
 import dao.CredencialesDAO;
@@ -53,65 +55,64 @@ public class GestionUsuariosService {
 		String nuevaNacionalidad = vistaGestion.pedirNuevaNacionalidad(
 				persona.getNacionalidad(), paisService.obtenerTodosLosPaises());
 
+		Boolean seniorActual = null;
+		Boolean nuevoSenior = null;
+		LocalDate nuevaFechaSenior = null;
+
+		String nuevoApodo = null;
+		String especialidadesActualesTexto = null;
+		String nuevasEspecialidadesTexto = null;
+
+		if (perfil == Perfiles.COORDINACION) {
+			Coordinacion coord = coordinacionDAO.buscarPorIdPersona(idPersona);
+			if (coord == null) {
+				vistaGestion.mostrarSinCoordinacion();
+				return;
+			}
+
+			seniorActual = coord.getSenior();
+			LocalDate fechaActual = coord.getFechasenior();
+
+			nuevoSenior = vistaGestion.pedirNuevoSenior(seniorActual);
+			nuevaFechaSenior = fechaActual;
+
+			if (nuevoSenior != null && nuevoSenior) {
+				nuevaFechaSenior = vistaGestion
+						.pedirNuevaFechaSenior(fechaActual);
+			}
+		} else if (perfil == Perfiles.ARTISTA) {
+
+			Artista artista = artistaDAO.buscarPorIdPersona(idPersona);
+			if (artista == null) {
+				vistaGestion.mostrarSinArtista();
+				return;
+			}
+
+			nuevoApodo = vistaGestion.pedirNuevoApodo(artista.getApodo());
+
+			especialidadesActualesTexto = EspecialidadesAdapter
+					.listaAString(artista.getEspecialidades());
+
+			nuevasEspecialidadesTexto = vistaGestion
+					.pedirNuevasEspecialidades(especialidadesActualesTexto);
+		}
+
 		boolean actualizarPersona = personaDAO.actualizarPersona(idPersona,
 				nuevoNombre, nuevoEmail, nuevaNacionalidad);
-		vistaGestion.mostrarResultadoActualizacionDatosPersonales(
-				actualizarPersona);
-
 		if (!actualizarPersona) {
 			return;
 		}
 
 		if (perfil == Perfiles.COORDINACION) {
-			gestionarDatosCoordinacion(idPersona);
-		} else if (perfil == Perfiles.ARTISTA) {
-			gestionarDatosArtista(idPersona);
-		} else {
-			vistaGestion.mostrarSinDatosProfesionales(perfil);
+			coordinacionDAO.actualizarCoordinacion(idPersona, nuevoSenior,
+					nuevaFechaSenior);
 		}
+		if (perfil == Perfiles.ARTISTA) {
+			artistaDAO.actualizarArtista(idPersona, nuevoApodo,
+					nuevasEspecialidadesTexto);
+		}
+		vistaGestion.mostrarResultadoActualizacionDatosPersonales(
+				actualizarPersona);
 	}
 
-	private void gestionarDatosCoordinacion(Long idPersona) {
-
-		Coordinacion coord = coordinacionDAO.buscarPorIdPersona(idPersona);
-		if (coord == null) {
-			vistaGestion.mostrarSinCoordinacion();
-			return;
-		}
-
-		Boolean seniorActual = coord.getSenior();
-		java.time.LocalDate fechaActual = coord.getFechasenior();
-
-		Boolean nuevoSenior = vistaGestion.pedirNuevoSenior(seniorActual);
-		java.time.LocalDate nuevaFechaSenior = fechaActual;
-
-		if (nuevoSenior != null && nuevoSenior) {
-			nuevaFechaSenior = vistaGestion.pedirNuevaFechaSenior(fechaActual);
-		}
-
-		boolean ok = coordinacionDAO.actualizarCoordinacion(idPersona,
-				nuevoSenior, nuevaFechaSenior);
-		vistaGestion.mostrarResultadoActualizacionCoordinacion(ok);
-	}
-
-	private void gestionarDatosArtista(Long idPersona) {
-
-		Artista artista = artistaDAO.buscarPorIdPersona(idPersona);
-		if (artista == null) {
-			vistaGestion.mostrarSinArtista();
-			return;
-		}
-
-		String nuevoApodo = vistaGestion.pedirNuevoApodo(artista.getApodo());
-
-		String especialidadesActualesTexto = EspecialidadesAdapter
-				.listaAString(artista.getEspecialidades());
-
-		String nuevasEspecialidadesTexto = vistaGestion
-				.pedirNuevasEspecialidades(especialidadesActualesTexto);
-
-		boolean ok = artistaDAO.actualizarArtista(idPersona, nuevoApodo,
-				nuevasEspecialidadesTexto);
-		vistaGestion.mostrarResultadoActualizacionArtista(ok);
-	}
 }
