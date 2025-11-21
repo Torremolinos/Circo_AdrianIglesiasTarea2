@@ -141,4 +141,32 @@ public class EspectaculoDAO {
 
 		return false;
 	}
+
+	public Long obtenerUltimoId() {
+		String sql = "SELECT MAX(id) AS id FROM espectaculo";
+		try (PreparedStatement ps = connection.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			if (rs.next())
+				return rs.getLong("id");
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error al obtener el id", e);
+		}
+		return null;
+	}
+	
+	public boolean existeNombre(String nombre) {
+	    String sql = "SELECT COUNT(*) FROM espectaculo WHERE LOWER(nombre) = LOWER(?)";
+
+	    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setString(1, nombre);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        LOGGER.log(Level.SEVERE, "Error comprobando nombre de espectáculo", e);
+	    }
+	    return false;
+	}
 }

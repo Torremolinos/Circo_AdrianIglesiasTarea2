@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,26 +37,27 @@ public class NumeroDAO {
 	 * @return
 	 */
 
-	public boolean crearNumero(Numero numero) {
+	public boolean crearNumero(String nombre, double duracion, int orden,
+			Long idEspectaculo) {
 
-		String sql = "INSERT INTO numero (`order`, nombre, duracion, id_espectaculo) "
-				+ "VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO numero (`orden`, nombre, duracion, id_espectaculo) VALUES (?,?,?,?)";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
-			ps.setInt(1, numero.getOrder());
-			ps.setString(2, numero.getNombre());
-			ps.setDouble(3, numero.getDuracion());
-			ps.setLong(4, numero.getId_espectaculo());
+			ps.setInt(1, orden);
 
-			int filas = ps.executeUpdate();
-			return filas > 0;
+			ps.setString(2, nombre);
 
-		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al crear número", e);
+			ps.setDouble(3, duracion);
+
+			ps.setLong(4, idEspectaculo);
+
+			return ps.executeUpdate() > 0;
+
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error creando número", e);
+			return false;
 		}
-
-		return false;
 	}
 
 	/***
@@ -65,35 +67,32 @@ public class NumeroDAO {
 	 * @return
 	 */
 
-	public List<Numero> listarPorEspectaculo(Long idEspectaculo) {
+	public LinkedHashSet<Numero> buscarPorEspectaculo(Long idEspectaculo) {
+		LinkedHashSet<Numero> numeros = new LinkedHashSet<>();
 
-		String sql = "SELECT * FROM numero WHERE id_espectaculo = ? "
-				+ "ORDER BY `order`";
-
-		List<Numero> lista = new ArrayList<>();
+		String sql = "SELECT * FROM numero WHERE id_espectaculo = ? ORDER BY `orden`";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-
 			ps.setLong(1, idEspectaculo);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Numero n = new Numero();
 					n.setId(rs.getLong("id"));
-					n.setOrder(rs.getInt("order"));
+					n.setOrder(rs.getInt("orden"));
 					n.setNombre(rs.getString("nombre"));
 					n.setDuracion(rs.getDouble("duracion"));
-					n.setId(rs.getLong("id_espectaculo"));
-					lista.add(n);
+					n.setId_espectaculo(rs.getLong("id_espectaculo"));
+					numeros.add(n);
 				}
 			}
 
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al listar números por espectáculo",
+			LOGGER.log(Level.SEVERE, "Error al listar números del espectáculo",
 					e);
 		}
 
-		return lista;
+		return numeros;
 	}
 
 	/***
@@ -106,7 +105,7 @@ public class NumeroDAO {
 	public boolean actualizarNumero(Numero numero) {
 
 		String sql = "UPDATE numero "
-				+ "SET `order` = ?, nombre = ?, duracion = ? " + "WHERE id = ?";
+				+ "SET `orden` = ?, nombre = ?, duracion = ? " + "WHERE id = ?";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
@@ -147,4 +146,36 @@ public class NumeroDAO {
 
 		return false;
 	}
+	
+	/**
+     *  metodo para buscarun número por su id.
+     *
+     * @param idNumero id del número
+     * @return Numero encontrado o null si no existe
+     */
+	public Numero buscarPorId(Long idNumero) {
+        String sql = "SELECT * FROM numero WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setLong(1, idNumero);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Numero n = new Numero();
+                    n.setId(rs.getLong("id"));
+                    n.setOrder(rs.getInt("orden"));
+                    n.setNombre(rs.getString("nombre"));
+                    n.setDuracion(rs.getDouble("duracion"));
+                    n.setId_espectaculo(rs.getLong("id_espectaculo"));
+                    return n;
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al buscar número por id", e);
+        }
+
+        return null;
+    }
 }

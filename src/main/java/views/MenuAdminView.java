@@ -9,22 +9,12 @@ package views;
 
 import java.util.Scanner;
 
-import entidades.Credenciales;
-import entidades.Sesion;
-import service.CredencialesService;
-import service.EspectaculoService;
-
 public class MenuAdminView {
 
-	Sesion sesion;
 	private final Scanner sc = new Scanner(System.in);
 
 	/**
-	 * Este metodo gestiona el menuAdmin, dandonos acceso a las diferentes
-	 * acciones o funcionalidades que puede acceder el admin. Tambien hay partes
-	 * del menu en construccion a futuras mejoras.
-	 * 
-	 * @return
+	 * Muestra el menú de admin y devuelve la opción elegida.
 	 */
 	public int menuAdmin(String perfiles) {
 		System.out.println();
@@ -60,7 +50,6 @@ public class MenuAdminView {
 	 *
 	 * @return true si confirma, false si cancela.
 	 */
-
 	public boolean confirmarLogout() {
 		while (true) {
 			System.out.println("¿Seguro que quieres cerrar sesión?");
@@ -70,6 +59,7 @@ public class MenuAdminView {
 
 			switch (eleccionSalida) {
 			case "s":
+				System.out.println("Saliendo al menú principal...");
 				return true;
 			case "n":
 				System.out.println("Operación cancelada. Volviendo al menú...");
@@ -85,7 +75,6 @@ public class MenuAdminView {
 	 *
 	 * @return true si quiere salir del programa, false si cancela.
 	 */
-
 	public boolean confirmarSalirPrograma() {
 		while (true) {
 			System.out.println("¿Seguro que quieres salir del programa?");
@@ -95,6 +84,7 @@ public class MenuAdminView {
 
 			switch (eleccionSalida) {
 			case "s":
+				System.out.println("👋 Saliendo del programa...");
 				return true;
 			case "n":
 				System.out.println("Operación cancelada. Volviendo al menú...");
@@ -103,5 +93,14 @@ public class MenuAdminView {
 				System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
 			}
 		}
+	}
+
+	public void mostrarMensajeEnConstruccion() {
+		System.out.println("En construcción aún no disponible");
+	}
+
+	public void mostrarMensajeOpcionInvalida() {
+		System.out.println(
+				"❌ La opción marcada es incorrecta, por favor inténtalo de nuevo.");
 	}
 }

@@ -15,14 +15,12 @@ public class MenuInvitadoView {
 
 	private final Scanner sc = new Scanner(System.in);
 
-	
-	
 	public int menuInvitado(String perfiles) {
 		System.out.println("Bienvenido " + perfiles);
 		System.out.println("🎪 Te damos la bienvenida a nuestro Circo 🎪 ");
-		System.out.println("1.Iniciar sesión");
-		System.out.println("2.Ver espectáculos");
-		System.out.println("3.Salir");
+		System.out.println("1. Iniciar sesión");
+		System.out.println("2. Ver espectáculos");
+		System.out.println("3. Salir");
 
 		String opcion = sc.nextLine().trim();
 		try {
@@ -51,7 +49,7 @@ public class MenuInvitadoView {
 			System.out.println("¿Seguro que quieres salir? (S/N)");
 			respuestaUsuario = sc.nextLine().trim().toLowerCase();
 			esValido = respuestaUsuario.equals("s")
-							|| respuestaUsuario.equals("n");
+					|| respuestaUsuario.equals("n");
 
 			if (!esValido) {
 				System.out.println("❌ Opción no válida. Escribe 'S' o 'N'.");
@@ -62,8 +60,13 @@ public class MenuInvitadoView {
 		return respuestaUsuario.equals("s");
 	}
 
+	public void mostrarMensajeDespedida() {
+		System.out.println("Gracias por tu visita, ¡cuídate!");
+	}
+
 	public void mostrarMensajeErrorUsuarioContrasenia() {
-		System.out.println("❌ Usuario o contraseña incorrectos.");
+		System.out.println(
+				"❌ Usuario o contraseña incorrectos. Inténtalo de nuevo.");
 	}
 
 	public void mostrarMensajeSesionIniciada(Perfiles perfiles) {

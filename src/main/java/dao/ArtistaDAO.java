@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,5 +125,34 @@ public class ArtistaDAO {
 			LOGGER.log(Level.SEVERE, "Error actualizando artista", e);
 			return false;
 		}
+	}
+
+	/**
+	 * Lista todos los artistas registrados en el sistema
+	 */
+	public List<Artista> listarArtistas() {
+
+		List<Artista> artistas = new ArrayList<>();
+
+		String sql = "SELECT id, apodo, id_persona FROM artista";
+
+		try (PreparedStatement ps = connection.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+
+				Artista a = new Artista();
+				a.setIdArt(rs.getLong("id"));
+				a.setApodo(rs.getString("apodo"));
+				a.setId_persona(rs.getLong("id_persona"));
+
+				artistas.add(a);
+			}
+
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error al listar artistas", e);
+		}
+
+		return artistas;
 	}
 }

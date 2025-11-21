@@ -12,7 +12,7 @@ import java.util.Set;
 public class Numero {
 
 	private Long id;
-	private int order;
+	private int orden;
 	private String nombre;
 	private double duracion;
 	private Long id_espectaculo;
@@ -22,21 +22,21 @@ public class Numero {
 		super();
 	}
 
-	public Numero(Long id, int order, String nombre, double duracion,
+	public Numero(Long id, int orden, String nombre, double duracion,
 			Set<Artista> artistas) {
 		super();
 		this.id = id;
-		this.order = order;
+		this.orden = orden;
 		this.nombre = nombre;
 		this.duracion = duracion;
 		this.artistas = artistas;
 	}
 
-	public Numero(Long id, int order, String nombre, double duracion,
+	public Numero(Long id, int orden, String nombre, double duracion,
 			Long id_espectaculo, Set<Artista> artistas) {
 		super();
 		this.id = id;
-		this.order = order;
+		this.orden = orden;
 		this.nombre = nombre;
 		this.duracion = duracion;
 		this.id_espectaculo = id_espectaculo;
@@ -60,11 +60,11 @@ public class Numero {
 	}
 
 	public int getOrder() {
-		return order;
+		return orden;
 	}
 
-	public void setOrder(int order) {
-		this.order = order;
+	public void setOrder(int orden) {
+		this.orden = orden;
 	}
 
 	public String getNombre() {

@@ -7,126 +7,35 @@
 
 package service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 import dao.CoordinacionDAO;
 import dao.EspectaculoDAO;
+import dao.PersonaDAO;
 import entidades.Coordinacion;
 import entidades.Espectaculo;
 import entidades.Perfiles;
+import entidades.Persona;
 import entidades.Sesion;
-import utils.Config;
 import utils.Utilidades;
+import views.MenuEspectaculoView;
+import views.MenuNumeroView;
 
 public class EspectaculoService {
-
-	static Config config = new Config();
-	public static String RUTA = config.getProperty("espectaculos");
-	public static String RUTAcredenciales = config.getProperty("credenciales");
-
-	/**
-	 * Aqui usamos ObjectOutputStream para escribir en un flujo de salida,
-	 * serializando el objeto, lo usariamos para guardar esos bytes en un
-	 * archivo en este caso espectaculos.dat
-	 * 
-	 * @param espectaculos
-	 */
-	public static void guardarEspectaculos(
-			LinkedHashSet<Espectaculo> espectaculos) {
-		try (ObjectOutputStream oos = new ObjectOutputStream(
-				new FileOutputStream(RUTA))) {
-			oos.writeObject(espectaculos);
-			System.out.println("✅ Espectáculos guardados correctamente.");
-		} catch (IOException e) {
-			System.out.println(
-					"❌ Error al guardar los espectáculos: " + e.getMessage());
-		}
-	}
-
-	/**
-	 * Aqui usamos ObjectInputStream para leer del fichero.dat los espectaculos
-	 * que hemos almacenado. En este metodo retornamos un LinkedHashSet de los
-	 * espectaculos.
-	 * 
-	 * @return
-	 */
-	public static LinkedHashSet<Espectaculo> listaEspectaculos() {
-		File file = new File(RUTA);
-
-		if (!file.exists() || file.length() == 0)
-			return new LinkedHashSet<>();
-
-		try (ObjectInputStream ois = new ObjectInputStream(
-				new FileInputStream(file))) {
-			Object obj = ois.readObject();
-			if (obj instanceof LinkedHashSet) {
-				return (LinkedHashSet<Espectaculo>) obj;
-			} else if (obj instanceof Set) {
-				return new LinkedHashSet<>((Set<Espectaculo>) obj);
-			} else {
-				return new LinkedHashSet<>();
-			}
-		} catch (IOException | ClassNotFoundException e) {
-			System.err.println("Error al leer espectáculos: " + e.getMessage());
-			return new LinkedHashSet<>();
-		}
-	}
 
 	/**
 	 * Esta función muestra un informe básico para los invitados muestra el id,
 	 * nombre, fechainicio y fechafin.
-	 * 
-	 * 
 	 */
 	public LinkedHashSet<Espectaculo> mostrarInformeBasico() {
-        EspectaculoDAO dao = new EspectaculoDAO();
-        LinkedHashSet<Espectaculo> espectaculos = dao.listaEspectaculos();
-        return espectaculos;
-    }
-
-		/*
-		 * switch (perfil) { case INVITADO:
-		 * System.out.println("INFORME DE ESPECTÁCULOS");
-		 * System.out.println("---------------------------"); for (Espectaculo e
-		 * : espectaculos) { System.out.println("ID: " + e.getId());
-		 * System.out.println("Nombre: " + e.getNombre());
-		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
-		 * e.getFechafin()); System.out.println(); } break; case ADMIN:
-		 * System.out.println("INFORME DE ESPECTÁCULOS");
-		 * System.out.println("---------------------------"); for (Espectaculo e
-		 * : espectaculos) { System.out.println("ID: " + e.getId());
-		 * System.out.println("Nombre: " + e.getNombre());
-		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
-		 * e.getFechafin()); System.out.println(); } break; case ARTISTA:
-		 * System.out.println("INFORME DE ESPECTÁCULOS");
-		 * System.out.println("---------------------------"); for (Espectaculo e
-		 * : espectaculos) { System.out.println("ID: " + e.getId());
-		 * System.out.println("Nombre: " + e.getNombre());
-		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
-		 * e.getFechafin()); System.out.println(); } break; case COORDINADOR:
-		 * System.out.println("INFORME DE ESPECTÁCULOS");
-		 * System.out.println("---------------------------"); for (Espectaculo e
-		 * : espectaculos) { System.out.println("ID: " + e.getId());
-		 * System.out.println("Nombre: " + e.getNombre());
-		 * System.out.println("Periodo desde: " + e.getFechaini() + " hasta " +
-		 * e.getFechafin()); System.out.println(); } break; default: break; }
-		 */
-
-	
+		EspectaculoDAO dao = new EspectaculoDAO();
+		LinkedHashSet<Espectaculo> espectaculos = dao.listaEspectaculos();
+		return espectaculos;
+	}
 
 	/**
 	 * Creamos un espectaculo, adecuado al perfil que pasa por parametros luego
@@ -135,57 +44,82 @@ public class EspectaculoService {
 	 * @param perfilUsuario
 	 */
 	public static void crearEspectaculo(Sesion sesion, Perfiles perfilUsuario) {
-		Coordinacion usuarioCoord = new Coordinacion();
-		Scanner sc = new Scanner(System.in);
 
-		LinkedHashSet<Espectaculo> existentes = listaEspectaculos();
+		EspectaculoDAO espectaculoDAO = new EspectaculoDAO();
+		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
+		Coordinacion usuarioCoord = null;
 
-		System.out.println("=== Creación de nuevo espectáculo ===");
+		MenuEspectaculoView vista = new MenuEspectaculoView();
+		MenuNumeroView menuNumeroView = new MenuNumeroView();
+
+		LinkedHashSet<Espectaculo> existentes = espectaculoDAO
+				.listaEspectaculos();
+
+		vista.mostrarMensaje("=== Creación de nuevo espectáculo ===");
 
 		String nombreValido = null;
-		while (true) {
-			System.out.print(
+		Boolean entradaCorrecta = true;
+		while (entradaCorrecta) {
+			String nombre = vista.pedirCadena(
 					"Introduce el nombre del espectáculo (máx 25 caracteres): ");
-			String nombre = sc.nextLine().trim();
 			if (nombre.isEmpty() || nombre.length() > 25) {
-				System.out.println(
+				vista.mostrarMensaje(
 						"❌ El nombre no puede estar vacío ni superar 25 caracteres.");
 				continue;
 			}
 			boolean repetido = existentes.stream()
 					.anyMatch(e -> e.getNombre().equalsIgnoreCase(nombre));
 			if (repetido) {
-				System.out
-						.println("❌ Ya existe un espectáculo con ese nombre.");
+				vista.mostrarMensaje(
+						"❌ Ya existe un espectáculo con ese nombre.");
 				continue;
 			}
 			nombreValido = nombre;
 			break;
 		}
 
-		System.out.println("Introduce la fecha de inicio:");
+		vista.mostrarMensaje("Introduce la fecha de inicio:");
 		LocalDate inicio = Utilidades.leerFechasLocalDate();
 
-		System.out.println("Introduce la fecha de fin:");
+		vista.mostrarMensaje("Introduce la fecha de fin:");
 		LocalDate fin = Utilidades.leerFechasLocalDate();
 
 		if (fin.isBefore(inicio)) {
-			System.out.println(
+			vista.mostrarMensaje(
 					"❌ La fecha de fin debe ser posterior a la de inicio.");
-
 			return;
 		}
 		if (inicio.plusYears(1).isBefore(fin)) {
-			System.out.println("❌ El periodo no puede superar 1 año.");
-
+			vista.mostrarMensaje("❌ El periodo no puede superar 1 año.");
 			return;
 		}
 
 		if (perfilUsuario == Perfiles.COORDINACION) {
 			String nombreCoordinadorSesion = sesion.getNombre();
-			usuarioCoord.setNombre(nombreCoordinadorSesion);
+
+			LinkedHashSet<Coordinacion> coordinadores = coordinacionDAO
+					.listarCoordinacionMap();
+			usuarioCoord = coordinadores.stream()
+					.filter(c -> c.getNombre()
+							.equalsIgnoreCase(nombreCoordinadorSesion))
+					.findFirst().orElse(null);
+
+			if (usuarioCoord == null) {
+				vista.mostrarMensaje(
+						"❌ No se encontró el coordinador de la sesión en la base de datos.");
+				return;
+			}
 		} else if (perfilUsuario == Perfiles.ADMIN) {
 			usuarioCoord = seleccionarCoordinador();
+			if (usuarioCoord == null) {
+				vista.mostrarMensaje(
+						"❌ No se ha seleccionado ningún coordinador.");
+				return;
+			}
+		} else {
+			vista.mostrarMensaje(
+					"❌ Perfil no autorizado para crear espectáculos.");
+			return;
 		}
 
 		Espectaculo nuevo = new Espectaculo();
@@ -193,8 +127,59 @@ public class EspectaculoService {
 		nuevo.setFechaini(inicio);
 		nuevo.setFechafin(fin);
 		nuevo.setId_coordinacion(usuarioCoord.getId());
-		existentes.add(nuevo);
-		guardarEspectaculos(existentes);
+		boolean creado = espectaculoDAO.crearEspectaculo(nuevo);
+		if (creado) {
+			vista.mostrarMensaje("✅ Espectáculo creado correctamente.");
+		} else {
+			vista.mostrarMensaje("❌ No se ha podido crear el espectáculo.");
+		}
+
+		if (creado) {
+			final String nombreBuscado = nombreValido;
+
+			LinkedHashSet<Espectaculo> todos = espectaculoDAO
+					.listaEspectaculos();
+
+			Long idEspectaculo = todos.stream()
+					.filter(e -> e.getNombre().equalsIgnoreCase(nombreBuscado))
+					.map(Espectaculo::getId).findFirst().orElse(null);
+
+			if (idEspectaculo == null) {
+				vista.mostrarMensaje(
+						"⚠ No se ha podido recuperar el ID del espectáculo recién creado.");
+				return;
+			}
+
+			NumeroService numeroService = new NumeroService();
+
+			boolean seguir = true;
+
+			while (seguir) {
+				int opcion = menuNumeroView.pedirOpcionMenu();
+
+				switch (opcion) {
+				case 1:
+					numeroService.crearNumeroParaEspectaculo(idEspectaculo);
+					break;
+
+				case 2:
+					numeroService.modificarNumero(idEspectaculo);
+					break;
+
+				case 3:
+					numeroService.listarNumeros(idEspectaculo);
+					break;
+
+				case 4:
+					seguir = false;
+					break;
+
+				default:
+					vista.mostrarMensaje("❌ Opción inválida.");
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -205,94 +190,107 @@ public class EspectaculoService {
 	 */
 
 	public static Coordinacion seleccionarCoordinador() {
-		Scanner in = new Scanner(System.in);
-		List<Coordinacion> coordinadores = new ArrayList<>();
+		MenuEspectaculoView vista = new MenuEspectaculoView();
+		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
+		PersonaDAO personaDAO = new PersonaDAO();
 
-		try {
-			BufferedReader lectura = new BufferedReader(
-					new FileReader(RUTAcredenciales));
-			String linea;
-			while ((linea = lectura.readLine()) != null) {
-				String[] parte = linea.split("\\|");
-				if (parte.length == 7
-						&& parte[6].equalsIgnoreCase("coordinacion")) {
-					Coordinacion coordinador = new Coordinacion();
-					coordinador.setId((long) Integer.parseInt(parte[0]) + 1);
-					coordinador.setNombre(parte[4]);
-					coordinador.setNacionalidad(parte[5]);
-					coordinadores.add(coordinador);
-				}
-			}
-		} catch (Exception e) {
-			System.out
-					.println("❌ Error al leer credenciales: " + e.getMessage());
+		// Coge todos los coordinadores desde el DAO
+		// Usa el método que tengas implementado: listarCoordinacion() o
+		// listarCoordinacionMap()
+		// Si el que tienes devuelve List<Coordinacion>, cambia esto en
+		// consecuencia.
+		List<Coordinacion> coordinadores = coordinacionDAO.listarCoordinacion();
+		// Si tu método devuelve LinkedHashSet<Coordinacion>, usa:
+		// LinkedHashSet<Coordinacion> setCoordinadores =
+		// coordinacionDAO.listarCoordinacionMap();
+		// List<Coordinacion> coordinadores = new ArrayList<>(setCoordinadores);
 
+		if (coordinadores == null || coordinadores.isEmpty()) {
+			vista.mostrarMensaje("⚠ No hay coordinadores registrados.");
 			return null;
 		}
-		if (coordinadores.isEmpty()) {
-			System.out.println("⚠ No hay coordinadores registrados.");
 
-			return null;
-		}
-		System.out.println("=== Selecciona un coordinador ===");
+		vista.mostrarMensaje("=== Selecciona un coordinador ===");
 		for (int i = 0; i < coordinadores.size(); i++) {
-			Coordinacion listaCordinadoresRegistrados = coordinadores.get(i);
-			System.out.printf("%d → %s (%s)%n", (i + 1),
-					listaCordinadoresRegistrados.getNombre(),
-					listaCordinadoresRegistrados.getNacionalidad());
+			Coordinacion c = coordinadores.get(i);
+
+			// 👉 Aquí completamos los datos tirando de PERSONA
+			Persona p = personaDAO.buscarPorId(c.getId_persona());
+
+			String nombre = (p != null && p.getNombre() != null) ? p.getNombre()
+					: "Sin nombre";
+
+			String nacionalidad = (p != null && p.getNacionalidad() != null)
+					? p.getNacionalidad()
+					: "Sin nacionalidad";
+
+			vista.mostrarMensaje(String.format("%d → %s (%s)", (i + 1), nombre,
+					nacionalidad));
 		}
 
 		int eleccion = -1;
 
 		while (true) {
-			System.out.println("Introduce el número del coordinador");
+			String entrada = vista
+					.pedirCadena("Introduce el número del coordinador: ");
 			try {
-				eleccion = Integer.parseInt(in.nextLine().trim()) - 1;
+				eleccion = Integer.parseInt(entrada.trim()) - 1;
 				if (eleccion >= 0 && eleccion < coordinadores.size()) {
 					break;
 				} else {
-					System.out.println("Opcion no valida, intentalo de nuevo.");
+					vista.mostrarMensaje(
+							"Opcion no valida, intentalo de nuevo.");
 				}
 			} catch (NumberFormatException e) {
-
-				System.out.println("❌ Debes introducir un número válido.");
+				vista.mostrarMensaje("❌ Debes introducir un número válido.");
 			}
 		}
+
 		Coordinacion elegido = coordinadores.get(eleccion);
-		System.out.println("✅ Has seleccionado a: " + elegido.getNombre());
+		vista.mostrarMensaje("✅ Has seleccionado a: "
+				+ personaDAO.buscarPorId(elegido.getId_persona()).getNombre());
 		return elegido;
 	}
 
 	/**
 	 * Modificamos el espectaculo, indicandolo por id, pasaremos el perfil del
-	 * usuario puesto si es perfil admin, podra reecolocar un coordinador.
+	 * usuario puesto si es perfil admin, podra recolocar un coordinador.
 	 * 
 	 * @param perfilUsuario
 	 */
 
 	public static void modificarEspectaculo(Perfiles perfilUsuario) {
-		Scanner sc = new Scanner(System.in);
-		HashSet<Espectaculo> espectaculos = listaEspectaculos();
+
+		EspectaculoDAO espectaculoDAO = new EspectaculoDAO();
+		MenuEspectaculoView vista = new MenuEspectaculoView();
+		MenuNumeroView menuNumeroView = new MenuNumeroView();
+
+		LinkedHashSet<Espectaculo> espectaculos = espectaculoDAO
+				.listaEspectaculos();
 
 		if (espectaculos.isEmpty()) {
-			System.out.println(
+			vista.mostrarMensaje(
 					"⚠ No hay espectáculos registrados para modificar.");
-
 			return;
 		}
 
-		System.out.println("=== LISTA DE ESPECTÁCULOS ===");
+		vista.mostrarMensaje("=== LISTA DE ESPECTÁCULOS ===");
 		for (Espectaculo e : espectaculos) {
-			System.out.println("ID: " + e.getId() + " → " + e.getNombre() + " ("
-					+ e.getFechaini() + " → " + e.getFechafin() + ")");
+			vista.mostrarMensaje("ID: " + e.getId() + " → " + e.getNombre()
+					+ " (" + e.getFechaini() + " → " + e.getFechafin() + ")");
 		}
 
-		System.out.print(
+		String idTexto = vista.pedirCadena(
 				"Introduce el ID del espectáculo que deseas modificar: ");
-		long idBuscado = Long.parseLong(sc.nextLine().trim());
+		long idBuscado;
+		try {
+			idBuscado = Long.parseLong(idTexto.trim());
+		} catch (NumberFormatException e) {
+			vista.mostrarMensaje("❌ Debes introducir un número válido.");
+			return;
+		}
 
 		Espectaculo seleccionado = null;
-		Coordinacion coordinadorSeleccionado = null;
 		for (Espectaculo e : espectaculos) {
 			if (e.getId() == idBuscado) {
 				seleccionado = e;
@@ -301,93 +299,130 @@ public class EspectaculoService {
 		}
 
 		if (seleccionado == null) {
-			System.out.println("❌ No existe ningún espectáculo con ese ID.");
-
+			vista.mostrarMensaje("❌ No existe ningún espectáculo con ese ID.");
 			return;
 		}
+
 		Long id_coordinacion = seleccionado.getId_coordinacion();
 		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
-		coordinadorSeleccionado = coordinacionDAO
+		Coordinacion coordinadorSeleccionado = coordinacionDAO
 				.buscarPorIdCoordinacion(id_coordinacion);
-		System.out.println("\n=== Modificando espectáculo ===");
-		System.out.println("Nombre actual: " + seleccionado.getNombre());
-		System.out.println("Inicio actual: " + seleccionado.getFechaini());
-		System.out.println("Fin actual: " + seleccionado.getFechafin());
-		System.out.println("Coordinador actual: "
+
+		vista.mostrarMensaje("\n=== Modificando espectáculo ===");
+		vista.mostrarMensaje("Nombre actual: " + seleccionado.getNombre());
+		vista.mostrarMensaje("Inicio actual: " + seleccionado.getFechaini());
+		vista.mostrarMensaje("Fin actual: " + seleccionado.getFechafin());
+		vista.mostrarMensaje("Coordinador actual: "
 				+ (coordinadorSeleccionado.getId_persona() != null
 						? coordinadorSeleccionado.getNombre()
 						: "Sin asignar"));
 
 		String nuevoNombre = "";
+		boolean nombreEsCorrecto = false;
 
-		while (true) {
-			System.out
-					.print("Introduce el nuevo nombre (Enter para mantener): ");
-			nuevoNombre = sc.nextLine().trim();
+		while (!nombreEsCorrecto) {
+			nuevoNombre = vista.pedirCadena(
+					"Introduce el nuevo nombre (Enter para mantener): ");
 
 			if (nuevoNombre.isEmpty()) {
-				break;
-			}
-
-			if (nuevoNombre.length() > 25) {
-				System.out.println(
-						"❌ El nombre no puede superar 25 caracteres. Inténtalo de"
-								+ "nuevo.");
+				nombreEsCorrecto = true;
+			} else if (nuevoNombre.length() > 25) {
+				vista.mostrarMensaje(
+						"❌ El nombre no puede superar 25 caracteres. Inténtalo de nuevo.");
 			} else {
 				seleccionado.setNombre(nuevoNombre);
-				break;
+				nombreEsCorrecto = true;
 			}
 		}
 
-		System.out.println("Introduce la nueva fecha de inicio:");
+		vista.mostrarMensaje("Introduce la nueva fecha de inicio:");
 		LocalDate nuevaInicio = Utilidades.leerFechasLocalDate();
 
-		System.out.println("Introduce la nueva fecha de fin:");
+		vista.mostrarMensaje("Introduce la nueva fecha de fin:");
 		LocalDate nuevaFin = Utilidades.leerFechasLocalDate();
 
 		if (nuevaFin.isBefore(nuevaInicio)) {
-			System.out.println(
+			vista.mostrarMensaje(
 					"❌ La fecha de fin debe ser posterior a la de inicio.");
-
 			return;
 		}
 
 		seleccionado.setFechaini(nuevaInicio);
 		seleccionado.setFechafin(nuevaFin);
+
 		String resp = "";
 		if (perfilUsuario == Perfiles.ADMIN) {
-			while (true) {
-				System.out.print("¿Deseas cambiar el coordinador? (S/N): ");
-				resp = sc.nextLine().trim().toUpperCase();
+
+			boolean respuestaValida = false;
+
+			while (!respuestaValida) {
+				resp = vista
+						.pedirCadena("¿Deseas cambiar el coordinador? (S/N): ")
+						.toUpperCase();
 
 				if (resp.equals("S") || resp.equals("N")) {
-					break;
+					respuestaValida = true;
+				} else {
+					vista.mostrarMensaje(
+							"❌ Entrada no válida. Por favor, escribe 'S' o 'N'.");
 				}
-				System.out.println(
-						"❌ Entrada no válida. Por favor, escribe 'S' o 'N'.");
 			}
+
 			if (resp.equals("S")) {
 				Coordinacion nuevoCoord = seleccionarCoordinador();
 				if (nuevoCoord != null) {
-					
-					//seleccionado.set(coordinadorSeleccionado);
+					seleccionado.setId_coordinacion(nuevoCoord.getId());
 				} else {
-					System.out.println("⚠ No se cambió el coordinador.");
+					vista.mostrarMensaje("⚠ No se cambió el coordinador.");
 				}
 			} else {
-				System.out.println("ℹ No se modificó el coordinador.");
+				vista.mostrarMensaje("ℹ No se modificó el coordinador.");
 			}
 		}
-		// DETALLE IMPORTANTE, este trozo es codigo reutilizado del metodo
-		// guardar
-		// pero queria personalizar los mensajes de salida.
-		try (ObjectOutputStream oos = new ObjectOutputStream(
-				new FileOutputStream(RUTA))) {
-			oos.writeObject(espectaculos);
-			System.out.println("✅ Espectáculo modificado correctamente.");
-		} catch (IOException e) {
-			System.out.println(
-					"❌ Error al guardar los cambios: " + e.getMessage());
+
+		boolean actualizado = espectaculoDAO
+				.actualizarEspectaculo(seleccionado);
+
+		if (actualizado) {
+			vista.mostrarMensaje("✅ Espectáculo modificado correctamente.");
+		} else {
+			vista.mostrarMensaje(
+					"❌ No se ha podido actualizar el espectáculo.");
+		}
+
+		if (actualizado) {
+
+			Long idEspectaculo = seleccionado.getId();
+			NumeroService numeroService = new NumeroService();
+
+			boolean seguir = true;
+
+			while (seguir) {
+				int opcion = menuNumeroView.pedirOpcionMenu();
+
+				switch (opcion) {
+				case 1:
+					numeroService.crearNumeroParaEspectaculo(idEspectaculo);
+					break;
+
+				case 2:
+					numeroService.modificarNumero(idEspectaculo);
+					break;
+
+				case 3:
+					numeroService.listarNumeros(idEspectaculo);
+					break;
+
+				case 4:
+					seguir = false;
+					break;
+
+				default:
+					vista.mostrarMensaje("❌ Opción inválida.");
+					break;
+				}
+			}
 		}
 	}
+
 }

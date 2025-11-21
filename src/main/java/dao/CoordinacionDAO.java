@@ -13,6 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -155,7 +158,78 @@ public class CoordinacionDAO {
 
 		return false;
 	}
-	
-	
 
+	/***
+	 * Metodo para listar coordinaciones.
+	 * 
+	 * @return Coordinacion
+	 */
+
+	public LinkedHashSet<Coordinacion> listarCoordinacionMap() {
+
+		LinkedHashSet<Coordinacion> lista = new LinkedHashSet<>();
+		String sql = "SELECT id, senior, fechasenior, id_persona FROM coordinacion ORDER BY id";
+
+		try (PreparedStatement ps = connection.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+				Coordinacion coordinacion = new Coordinacion();
+
+				coordinacion.setId(rs.getLong("id"));
+				coordinacion.setSenior(rs.getBoolean("senior"));
+
+				Date fecha = rs.getDate("fechasenior");
+				if (fecha != null) {
+					coordinacion.setFechasenior(fecha.toLocalDate());
+				}
+
+				coordinacion.setId_persona(rs.getLong("id_persona"));
+
+				lista.add(coordinacion);
+			}
+
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error al listar coordinadores", e);
+		}
+
+		return lista;
+	}
+
+	/***
+	 * Metodo para listar coordinaciones.
+	 * 
+	 * @return Coordinacion
+	 */
+
+	public List<Coordinacion> listarCoordinacion() {
+
+		List<Coordinacion> lista = new ArrayList<>();
+		String sql = "SELECT id, senior, fechasenior, id_persona FROM coordinacion ORDER BY id";
+
+		try (PreparedStatement ps = connection.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+				Coordinacion coordinacion = new Coordinacion();
+
+				coordinacion.setId(rs.getLong("id"));
+				coordinacion.setSenior(rs.getBoolean("senior"));
+
+				Date fecha = rs.getDate("fechasenior");
+				if (fecha != null) {
+					coordinacion.setFechasenior(fecha.toLocalDate());
+				}
+
+				coordinacion.setId_persona(rs.getLong("id_persona"));
+
+				lista.add(coordinacion);
+			}
+
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error al listar coordinadores", e);
+		}
+
+		return lista;
+	}
 }
