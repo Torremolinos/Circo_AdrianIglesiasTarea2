@@ -214,7 +214,6 @@ public class EspectaculoService {
 		for (int i = 0; i < coordinadores.size(); i++) {
 			Coordinacion c = coordinadores.get(i);
 
-			// 👉 Aquí completamos los datos tirando de PERSONA
 			Persona p = personaDAO.buscarPorId(c.getId_persona());
 
 			String nombre = (p != null && p.getNombre() != null) ? p.getNombre()

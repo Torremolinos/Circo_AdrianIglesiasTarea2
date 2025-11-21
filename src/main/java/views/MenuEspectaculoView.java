@@ -13,10 +13,6 @@ public class MenuEspectaculoView {
 
 	private final Scanner sc = new Scanner(System.in);
 
-	// =========================
-	// MÉTODOS GENÉRICOS DE I/O
-	// =========================
-
 	/**
 	 * Mostrar un mensaje genérico por consola.
 	 */
@@ -32,10 +28,6 @@ public class MenuEspectaculoView {
 		System.out.print(mensaje);
 		return sc.nextLine().trim();
 	}
-
-	// =========================
-	// MÉTODOS ESPECÍFICOS DE ESPECTÁCULOS
-	// =========================
 
 	public void mostrarEspectaculos(LinkedHashSet<Espectaculo> espectaculos) {
 		System.out.println("📜 Lista de espectáculos disponibles:");
