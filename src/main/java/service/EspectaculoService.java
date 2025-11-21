@@ -1,427 +1,222 @@
 /**
-* Clase EspectaculoService.java
-*
-* @author ADRIAN IGLESIAS RIÑO
-* @version 1.0
-*/
+ * Clase EspectaculoService.java
+ *
+ * @author ADRIAN
+ * @version 1.0
+ */
 
 package service;
 
 import java.time.LocalDate;
-
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
-
 import dao.CoordinacionDAO;
 import dao.EspectaculoDAO;
-import dao.PersonaDAO;
 import entidades.Coordinacion;
 import entidades.Espectaculo;
 import entidades.Perfiles;
-import entidades.Persona;
 import entidades.Sesion;
-import utils.Utilidades;
-import views.MenuEspectaculoView;
-import views.MenuNumeroView;
 
 public class EspectaculoService {
 
-	/**
-	 * Esta función muestra un informe básico para los invitados muestra el id,
-	 * nombre, fechainicio y fechafin.
-	 */
+	private final EspectaculoDAO espectaculoDAO = new EspectaculoDAO();
+
 	public LinkedHashSet<Espectaculo> mostrarInformeBasico() {
-		EspectaculoDAO dao = new EspectaculoDAO();
-		LinkedHashSet<Espectaculo> espectaculos = dao.listaEspectaculos();
-		return espectaculos;
+		return espectaculoDAO.listaEspectaculos();
 	}
 
-	/**
-	 * Creamos un espectaculo, adecuado al perfil que pasa por parametros luego
-	 * usamos el metodo guardar, este lo guardara correspondientemente.
-	 * 
-	 * @param perfilUsuario
-	 */
 	public static void crearEspectaculo(Sesion sesion, Perfiles perfilUsuario) {
 
+		Scanner sc = new Scanner(System.in);
 		EspectaculoDAO espectaculoDAO = new EspectaculoDAO();
 		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
-		Coordinacion usuarioCoord = null;
 
-		MenuEspectaculoView vista = new MenuEspectaculoView();
-		MenuNumeroView menuNumeroView = new MenuNumeroView();
-
-		LinkedHashSet<Espectaculo> existentes = espectaculoDAO
-				.listaEspectaculos();
-
-		vista.mostrarMensaje("=== Creación de nuevo espectáculo ===");
+		System.out.println("=== Creación de nuevo espectáculo ===");
 
 		String nombreValido = null;
-		Boolean entradaCorrecta = true;
-		while (entradaCorrecta) {
-			String nombre = vista.pedirCadena(
+		boolean entradaCorrecta = false;
+
+		while (!entradaCorrecta) {
+			System.out.print(
 					"Introduce el nombre del espectáculo (máx 25 caracteres): ");
+			String nombre = sc.nextLine().trim();
+
 			if (nombre.isEmpty() || nombre.length() > 25) {
-				vista.mostrarMensaje(
+				System.out.println(
 						"❌ El nombre no puede estar vacío ni superar 25 caracteres.");
 				continue;
 			}
-			boolean repetido = existentes.stream()
-					.anyMatch(e -> e.getNombre().equalsIgnoreCase(nombre));
-			if (repetido) {
-				vista.mostrarMensaje(
-						"❌ Ya existe un espectáculo con ese nombre.");
+
+			if (espectaculoDAO.existeNombre(nombre)) {
+				System.out.println(
+						"❌ Ya existe un espectáculo con ese nombre. Prueba con otro.");
 				continue;
 			}
+
 			nombreValido = nombre;
-			break;
+			entradaCorrecta = true;
 		}
 
-		vista.mostrarMensaje("Introduce la fecha de inicio:");
-		LocalDate inicio = Utilidades.leerFechasLocalDate();
+		List<Coordinacion> coordinadores = coordinacionDAO.listarCoordinacion();
 
-		vista.mostrarMensaje("Introduce la fecha de fin:");
-		LocalDate fin = Utilidades.leerFechasLocalDate();
-
-		if (fin.isBefore(inicio)) {
-			vista.mostrarMensaje(
-					"❌ La fecha de fin debe ser posterior a la de inicio.");
-			return;
-		}
-		if (inicio.plusYears(1).isBefore(fin)) {
-			vista.mostrarMensaje("❌ El periodo no puede superar 1 año.");
+		if (coordinadores == null || coordinadores.isEmpty()) {
+			System.out.println(
+					"⚠️ No hay personas de coordinación registradas. No se puede crear el espectáculo.");
 			return;
 		}
 
-		if (perfilUsuario == Perfiles.COORDINACION) {
-			String nombreCoordinadorSesion = sesion.getNombre();
+		System.out.println("\n=== Selección de Coordinador/a ===");
+		for (Coordinacion c : coordinadores) {
+			System.out.printf(" - %s (%s)%n", c.getNombre(), c.getEmail());
+		}
 
-			LinkedHashSet<Coordinacion> coordinadores = coordinacionDAO
-					.listarCoordinacionMap();
+		Coordinacion usuarioCoord = null;
+		boolean coordValido = false;
+
+		while (!coordValido) {
+			System.out.print(
+					"Escribe el NOMBRE de la persona de coordinación que dirigirá el espectáculo: ");
+			String nombreCoord = sc.nextLine().trim();
+
+			final String nombreCoordFinal = nombreCoord;
+
 			usuarioCoord = coordinadores.stream()
-					.filter(c -> c.getNombre()
-							.equalsIgnoreCase(nombreCoordinadorSesion))
+					.filter(c -> c.getNombre() != null
+							&& c.getNombre().equalsIgnoreCase(nombreCoordFinal))
 					.findFirst().orElse(null);
 
 			if (usuarioCoord == null) {
-				vista.mostrarMensaje(
-						"❌ No se encontró el coordinador de la sesión en la base de datos.");
-				return;
+				System.out.println(
+						"❌ No se ha encontrado un coordinador con ese nombre. Intenta de nuevo.");
+			} else {
+				coordValido = true;
 			}
-		} else if (perfilUsuario == Perfiles.ADMIN) {
-			usuarioCoord = seleccionarCoordinador();
-			if (usuarioCoord == null) {
-				vista.mostrarMensaje(
-						"❌ No se ha seleccionado ningún coordinador.");
-				return;
+		}
+
+		LocalDate fechaIni = null;
+		LocalDate fechaFin = null;
+		boolean fechasOk = false;
+
+		while (!fechasOk) {
+			try {
+				System.out.print(
+						"Introduce la fecha de INICIO (formato AAAA-MM-DD): ");
+				String f1 = sc.nextLine().trim();
+				fechaIni = LocalDate.parse(f1);
+
+				System.out.print(
+						"Introduce la fecha de FIN (formato AAAA-MM-DD): ");
+				String f2 = sc.nextLine().trim();
+				fechaFin = LocalDate.parse(f2);
+
+				if (fechaFin.isBefore(fechaIni)) {
+					System.out.println(
+							"❌ La fecha de fin no puede ser anterior a la de inicio.");
+					continue;
+				}
+
+				fechasOk = true;
+
+			} catch (DateTimeParseException e) {
+				System.out.println(
+						"❌ Formato de fecha incorrecto. Ejemplo válido: 2025-03-15");
 			}
-		} else {
-			vista.mostrarMensaje(
-					"❌ Perfil no autorizado para crear espectáculos.");
-			return;
 		}
 
 		Espectaculo nuevo = new Espectaculo();
 		nuevo.setNombre(nombreValido);
-		nuevo.setFechaini(inicio);
-		nuevo.setFechafin(fin);
+		nuevo.setFechaini(fechaIni);
+		nuevo.setFechafin(fechaFin);
 		nuevo.setId_coordinacion(usuarioCoord.getId());
-		boolean creado = espectaculoDAO.crearEspectaculo(nuevo);
-		if (creado) {
-			vista.mostrarMensaje("✅ Espectáculo creado correctamente.");
+
+		boolean ok = espectaculoDAO.crearEspectaculo(nuevo);
+
+		if (ok) {
+			System.out.println("✅ Espectáculo creado correctamente.");
 		} else {
-			vista.mostrarMensaje("❌ No se ha podido crear el espectáculo.");
-		}
-
-		if (creado) {
-			final String nombreBuscado = nombreValido;
-
-			LinkedHashSet<Espectaculo> todos = espectaculoDAO
-					.listaEspectaculos();
-
-			Long idEspectaculo = todos.stream()
-					.filter(e -> e.getNombre().equalsIgnoreCase(nombreBuscado))
-					.map(Espectaculo::getId).findFirst().orElse(null);
-
-			if (idEspectaculo == null) {
-				vista.mostrarMensaje(
-						"⚠ No se ha podido recuperar el ID del espectáculo recién creado.");
-				return;
-			}
-
-			NumeroService numeroService = new NumeroService();
-
-			boolean seguir = true;
-
-			while (seguir) {
-				int opcion = menuNumeroView.pedirOpcionMenu();
-
-				switch (opcion) {
-				case 1:
-					numeroService.crearNumeroParaEspectaculo(idEspectaculo);
-					break;
-
-				case 2:
-					numeroService.modificarNumero(idEspectaculo);
-					break;
-
-				case 3:
-					numeroService.listarNumeros(idEspectaculo);
-					break;
-
-				case 4:
-					seguir = false;
-					break;
-
-				default:
-					vista.mostrarMensaje("❌ Opción inválida.");
-					break;
-				}
-			}
+			System.out.println("❌ Error al crear el espectáculo.");
 		}
 	}
-
-	/**
-	 * Metodo para seleccionar un coordinador, leemos el fichero, y comparamos
-	 * los datos correspondientes
-	 * 
-	 * @return
-	 */
-
-	public static Coordinacion seleccionarCoordinador() {
-		MenuEspectaculoView vista = new MenuEspectaculoView();
-		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
-		PersonaDAO personaDAO = new PersonaDAO();
-
-		// Coge todos los coordinadores desde el DAO
-		// Usa el método que tengas implementado: listarCoordinacion() o
-		// listarCoordinacionMap()
-		// Si el que tienes devuelve List<Coordinacion>, cambia esto en
-		// consecuencia.
-		List<Coordinacion> coordinadores = coordinacionDAO.listarCoordinacion();
-		// Si tu método devuelve LinkedHashSet<Coordinacion>, usa:
-		// LinkedHashSet<Coordinacion> setCoordinadores =
-		// coordinacionDAO.listarCoordinacionMap();
-		// List<Coordinacion> coordinadores = new ArrayList<>(setCoordinadores);
-
-		if (coordinadores == null || coordinadores.isEmpty()) {
-			vista.mostrarMensaje("⚠ No hay coordinadores registrados.");
-			return null;
-		}
-
-		vista.mostrarMensaje("=== Selecciona un coordinador ===");
-		for (int i = 0; i < coordinadores.size(); i++) {
-			Coordinacion c = coordinadores.get(i);
-
-			Persona p = personaDAO.buscarPorId(c.getId_persona());
-
-			String nombre = (p != null && p.getNombre() != null) ? p.getNombre()
-					: "Sin nombre";
-
-			String nacionalidad = (p != null && p.getNacionalidad() != null)
-					? p.getNacionalidad()
-					: "Sin nacionalidad";
-
-			vista.mostrarMensaje(String.format("%d → %s (%s)", (i + 1), nombre,
-					nacionalidad));
-		}
-
-		int eleccion = -1;
-
-		while (true) {
-			String entrada = vista
-					.pedirCadena("Introduce el número del coordinador: ");
-			try {
-				eleccion = Integer.parseInt(entrada.trim()) - 1;
-				if (eleccion >= 0 && eleccion < coordinadores.size()) {
-					break;
-				} else {
-					vista.mostrarMensaje(
-							"Opcion no valida, intentalo de nuevo.");
-				}
-			} catch (NumberFormatException e) {
-				vista.mostrarMensaje("❌ Debes introducir un número válido.");
-			}
-		}
-
-		Coordinacion elegido = coordinadores.get(eleccion);
-		vista.mostrarMensaje("✅ Has seleccionado a: "
-				+ personaDAO.buscarPorId(elegido.getId_persona()).getNombre());
-		return elegido;
-	}
-
-	/**
-	 * Modificamos el espectaculo, indicandolo por id, pasaremos el perfil del
-	 * usuario puesto si es perfil admin, podra recolocar un coordinador.
-	 * 
-	 * @param perfilUsuario
-	 */
 
 	public static void modificarEspectaculo(Perfiles perfilUsuario) {
 
+		Scanner sc = new Scanner(System.in);
 		EspectaculoDAO espectaculoDAO = new EspectaculoDAO();
-		MenuEspectaculoView vista = new MenuEspectaculoView();
-		MenuNumeroView menuNumeroView = new MenuNumeroView();
 
 		LinkedHashSet<Espectaculo> espectaculos = espectaculoDAO
 				.listaEspectaculos();
 
-		if (espectaculos.isEmpty()) {
-			vista.mostrarMensaje(
-					"⚠ No hay espectáculos registrados para modificar.");
+		if (espectaculos == null || espectaculos.isEmpty()) {
+			System.out.println(
+					"⚠️ No hay espectáculos registrados para modificar.");
 			return;
 		}
 
-		vista.mostrarMensaje("=== LISTA DE ESPECTÁCULOS ===");
+		System.out.println("=== Lista de espectáculos ===");
 		for (Espectaculo e : espectaculos) {
-			vista.mostrarMensaje("ID: " + e.getId() + " → " + e.getNombre()
-					+ " (" + e.getFechaini() + " → " + e.getFechafin() + ")");
+			System.out.printf("%d - %s (%s a %s)%n", e.getId(), e.getNombre(),
+					e.getFechaini(), e.getFechafin());
 		}
 
-		String idTexto = vista.pedirCadena(
-				"Introduce el ID del espectáculo que deseas modificar: ");
-		long idBuscado;
+		System.out.print("Introduce el ID del espectáculo a modificar: ");
+		String entrada = sc.nextLine().trim();
+		Long idSeleccionado = null;
+
 		try {
-			idBuscado = Long.parseLong(idTexto.trim());
+			idSeleccionado = Long.parseLong(entrada);
 		} catch (NumberFormatException e) {
-			vista.mostrarMensaje("❌ Debes introducir un número válido.");
+			System.out.println("❌ Debes introducir un número de ID válido.");
 			return;
 		}
 
-		Espectaculo seleccionado = null;
-		for (Espectaculo e : espectaculos) {
-			if (e.getId() == idBuscado) {
-				seleccionado = e;
-				break;
-			}
-		}
-
-		if (seleccionado == null) {
-			vista.mostrarMensaje("❌ No existe ningún espectáculo con ese ID.");
+		Espectaculo existente = espectaculoDAO.buscarPorId(idSeleccionado);
+		if (existente == null) {
+			System.out.println("❌ No existe un espectáculo con ese ID.");
 			return;
 		}
 
-		Long id_coordinacion = seleccionado.getId_coordinacion();
-		CoordinacionDAO coordinacionDAO = new CoordinacionDAO();
-		Coordinacion coordinadorSeleccionado = coordinacionDAO
-				.buscarPorIdCoordinacion(id_coordinacion);
+		System.out.println("Has seleccionado: " + existente.getNombre());
 
-		vista.mostrarMensaje("\n=== Modificando espectáculo ===");
-		vista.mostrarMensaje("Nombre actual: " + seleccionado.getNombre());
-		vista.mostrarMensaje("Inicio actual: " + seleccionado.getFechaini());
-		vista.mostrarMensaje("Fin actual: " + seleccionado.getFechafin());
-		vista.mostrarMensaje("Coordinador actual: "
-				+ (coordinadorSeleccionado.getId_persona() != null
-						? coordinadorSeleccionado.getNombre()
-						: "Sin asignar"));
+		System.out.print("Nuevo nombre (dejar vacío para mantener '"
+				+ existente.getNombre() + "'): ");
+		String nuevoNombre = sc.nextLine().trim();
+		if (!nuevoNombre.isEmpty()) {
+			existente.setNombre(nuevoNombre);
+		}
 
-		String nuevoNombre = "";
-		boolean nombreEsCorrecto = false;
-
-		while (!nombreEsCorrecto) {
-			nuevoNombre = vista.pedirCadena(
-					"Introduce el nuevo nombre (Enter para mantener): ");
-
-			if (nuevoNombre.isEmpty()) {
-				nombreEsCorrecto = true;
-			} else if (nuevoNombre.length() > 25) {
-				vista.mostrarMensaje(
-						"❌ El nombre no puede superar 25 caracteres. Inténtalo de nuevo.");
-			} else {
-				seleccionado.setNombre(nuevoNombre);
-				nombreEsCorrecto = true;
+		System.out
+				.print("Nueva fecha de inicio (AAAA-MM-DD, vacío para mantener "
+						+ existente.getFechaini() + "): ");
+		String fIni = sc.nextLine().trim();
+		if (!fIni.isEmpty()) {
+			try {
+				existente.setFechaini(LocalDate.parse(fIni));
+			} catch (DateTimeParseException e) {
+				System.out.println(
+						"⚠️ Formato incorrecto, se mantiene la fecha anterior.");
 			}
 		}
 
-		vista.mostrarMensaje("Introduce la nueva fecha de inicio:");
-		LocalDate nuevaInicio = Utilidades.leerFechasLocalDate();
-
-		vista.mostrarMensaje("Introduce la nueva fecha de fin:");
-		LocalDate nuevaFin = Utilidades.leerFechasLocalDate();
-
-		if (nuevaFin.isBefore(nuevaInicio)) {
-			vista.mostrarMensaje(
-					"❌ La fecha de fin debe ser posterior a la de inicio.");
-			return;
-		}
-
-		seleccionado.setFechaini(nuevaInicio);
-		seleccionado.setFechafin(nuevaFin);
-
-		String resp = "";
-		if (perfilUsuario == Perfiles.ADMIN) {
-
-			boolean respuestaValida = false;
-
-			while (!respuestaValida) {
-				resp = vista
-						.pedirCadena("¿Deseas cambiar el coordinador? (S/N): ")
-						.toUpperCase();
-
-				if (resp.equals("S") || resp.equals("N")) {
-					respuestaValida = true;
-				} else {
-					vista.mostrarMensaje(
-							"❌ Entrada no válida. Por favor, escribe 'S' o 'N'.");
-				}
-			}
-
-			if (resp.equals("S")) {
-				Coordinacion nuevoCoord = seleccionarCoordinador();
-				if (nuevoCoord != null) {
-					seleccionado.setId_coordinacion(nuevoCoord.getId());
-				} else {
-					vista.mostrarMensaje("⚠ No se cambió el coordinador.");
-				}
-			} else {
-				vista.mostrarMensaje("ℹ No se modificó el coordinador.");
+		System.out.print("Nueva fecha de fin (AAAA-MM-DD, vacío para mantener "
+				+ existente.getFechafin() + "): ");
+		String fFin = sc.nextLine().trim();
+		if (!fFin.isEmpty()) {
+			try {
+				existente.setFechafin(LocalDate.parse(fFin));
+			} catch (DateTimeParseException e) {
+				System.out.println(
+						"⚠️ Formato incorrecto, se mantiene la fecha anterior.");
 			}
 		}
 
-		boolean actualizado = espectaculoDAO
-				.actualizarEspectaculo(seleccionado);
+		boolean ok = espectaculoDAO.actualizarEspectaculo(existente);
 
-		if (actualizado) {
-			vista.mostrarMensaje("✅ Espectáculo modificado correctamente.");
+		if (ok) {
+			System.out.println("✅ Espectáculo modificado correctamente.");
 		} else {
-			vista.mostrarMensaje(
-					"❌ No se ha podido actualizar el espectáculo.");
-		}
-
-		if (actualizado) {
-
-			Long idEspectaculo = seleccionado.getId();
-			NumeroService numeroService = new NumeroService();
-
-			boolean seguir = true;
-
-			while (seguir) {
-				int opcion = menuNumeroView.pedirOpcionMenu();
-
-				switch (opcion) {
-				case 1:
-					numeroService.crearNumeroParaEspectaculo(idEspectaculo);
-					break;
-
-				case 2:
-					numeroService.modificarNumero(idEspectaculo);
-					break;
-
-				case 3:
-					numeroService.listarNumeros(idEspectaculo);
-					break;
-
-				case 4:
-					seguir = false;
-					break;
-
-				default:
-					vista.mostrarMensaje("❌ Opción inválida.");
-					break;
-				}
-			}
+			System.out.println("❌ Error al modificar el espectáculo.");
 		}
 	}
-
 }

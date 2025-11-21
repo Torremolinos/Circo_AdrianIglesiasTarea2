@@ -152,22 +152,14 @@ public class MenuService {
 				break;
 
 			case 6:
-				// TODO
+				menuAdminVista.mostrarMensajeEnConstruccion();
 				break;
 
 			case 7:
-				// TODO
+				menuAdminVista.mostrarMensajeEnConstruccion();
 				break;
 
 			case 8:
-				menuAdminVista.mostrarMensajeEnConstruccion();
-				break;
-
-			case 9:
-				menuAdminVista.mostrarMensajeEnConstruccion();
-				break;
-
-			case 10:
 				if (menuAdminVista.confirmarLogout()) {
 					sesion.cerrarSesion();
 					seguirEnMenu = false;
@@ -175,7 +167,7 @@ public class MenuService {
 				}
 				break;
 
-			case 11:
+			case 9:
 				if (menuAdminVista.confirmarSalirPrograma()) {
 					seguirEnMenu = false;
 					seguirEnPrograma = false;

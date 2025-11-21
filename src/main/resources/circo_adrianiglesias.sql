@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2025 a las 07:04:26
+-- Tiempo de generación: 22-11-2025 a las 00:02:42
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `artista` (
   `id` int(11) NOT NULL,
   `apodo` varchar(25) NOT NULL,
+  `especialidad` varchar(150) NOT NULL,
   `id_persona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -37,8 +38,9 @@ CREATE TABLE `artista` (
 -- Volcado de datos para la tabla `artista`
 --
 
-INSERT INTO `artista` (`id`, `apodo`, `id_persona`) VALUES
-(2, 'payaso,artista', 2);
+INSERT INTO `artista` (`id`, `apodo`, `especialidad`, `id_persona`) VALUES
+(2, 'Bugman', 'acrobacia,humor', 2),
+(3, 'ebony', 'equilibrismo', 15);
 
 -- --------------------------------------------------------
 
@@ -58,7 +60,8 @@ CREATE TABLE `coordinacion` (
 --
 
 INSERT INTO `coordinacion` (`id`, `senior`, `fechasenior`, `id_persona`) VALUES
-(1, 0, '2025-11-16', 1);
+(1, 0, '2025-11-16', 1),
+(2, 1, '1990-02-04', 16);
 
 -- --------------------------------------------------------
 
@@ -80,7 +83,10 @@ CREATE TABLE `credenciales` (
 
 INSERT INTO `credenciales` (`id`, `nombre`, `password`, `id_persona`, `perfiles`) VALUES
 (1, 'coordinador', '1234', 1, 'COORDINACION'),
-(3, 'adri', '1234', 2, 'ARTISTA');
+(3, 'adri', '1234', 2, 'ARTISTA'),
+(4, 'pepe', '1234', 12, 'ARTISTA'),
+(8, 'alba', '1234', 15, 'ARTISTA'),
+(9, 'kampary', '1234', 16, 'COORDINACION');
 
 -- --------------------------------------------------------
 
@@ -101,7 +107,14 @@ CREATE TABLE `espectaculo` (
 --
 
 INSERT INTO `espectaculo` (`id`, `nombre`, `fechaini`, `fechafin`, `id_coordinacion`) VALUES
-(1, 'Flores Carmesí', '2025-11-16', '2025-11-23', 1);
+(1, 'Flores Carmesí', '2025-11-16', '2025-11-23', 1),
+(2, 'Periquitos Asesinos', '2025-11-21', '2025-12-25', 1),
+(3, 'sadadd', '2025-11-21', '2025-12-21', 2),
+(4, 'asdasd', '2025-11-21', '2025-12-21', 2),
+(5, 'asdadd', '2025-12-21', '2025-12-21', 2),
+(6, '11', '2025-11-21', '2025-12-21', 2),
+(7, 'espectaculo', '2025-11-21', '2025-11-21', 2),
+(8, 'especatulorandom', '2025-12-21', '2026-01-21', 2);
 
 -- --------------------------------------------------------
 
@@ -124,7 +137,10 @@ CREATE TABLE `numero` (
 INSERT INTO `numero` (`id`, `orden`, `nombre`, `duracion`, `id_espectaculo`) VALUES
 (1, 1, 'Amapola Nocturna', 10, 1),
 (2, 2, 'Sensacion carmesi', 5, 1),
-(3, 3, 'Girasol Real', 7.5, 1);
+(3, 3, 'Girasol Real', 7.5, 1),
+(4, 1, 'asdsad', 4, 6),
+(5, 1, 'asdasd', 4.5, 7),
+(6, 1, 'Leones Voladores', 3.5, 8);
 
 -- --------------------------------------------------------
 
@@ -145,7 +161,11 @@ INSERT INTO `participa` (`idArt`, `idNumero`) VALUES
 (2, 1),
 (2, 2),
 (2, 1),
-(2, 2);
+(2, 2),
+(3, 5),
+(3, 5),
+(2, 6),
+(3, 6);
 
 -- --------------------------------------------------------
 
@@ -155,7 +175,7 @@ INSERT INTO `participa` (`idArt`, `idNumero`) VALUES
 
 CREATE TABLE `persona` (
   `id` int(11) NOT NULL,
-  `email` varchar(25) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `nombre` varchar(25) NOT NULL,
   `nacionalidad` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -166,7 +186,12 @@ CREATE TABLE `persona` (
 
 INSERT INTO `persona` (`id`, `email`, `nombre`, `nacionalidad`) VALUES
 (1, 'coordinador@coordinador.c', 'coordinador', 'España'),
-(2, 'adri@adri.com', 'adri', 'España');
+(2, 'adri@adri.com', 'adri', 'Turquía'),
+(5, 'prueba@correo.com', 'Persona Prueba', 'España'),
+(11, 'pruebaaas@correo.com', 'Persona asddadas', 'España'),
+(12, 'adri@correo.com', 'Adrian Igleisas', 'España'),
+(15, 'alba@alba.com', 'alba garcia', 'España'),
+(16, 'dani@dani.com', 'dani', 'Holanda');
 
 --
 -- Índices para tablas volcadas
@@ -232,37 +257,37 @@ ALTER TABLE `persona`
 -- AUTO_INCREMENT de la tabla `artista`
 --
 ALTER TABLE `artista`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `coordinacion`
 --
 ALTER TABLE `coordinacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `credenciales`
 --
 ALTER TABLE `credenciales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `espectaculo`
 --
 ALTER TABLE `espectaculo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `numero`
 --
 ALTER TABLE `numero`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Restricciones para tablas volcadas

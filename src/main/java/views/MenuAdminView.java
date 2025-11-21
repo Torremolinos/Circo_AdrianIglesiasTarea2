@@ -27,12 +27,10 @@ public class MenuAdminView {
 		System.out.println("3. Modificar perfil y credenciales");
 		System.out.println("4. Crear espectáculos");
 		System.out.println("5. Modificar espectáculos");
-		System.out.println("6. Crear número");
-		System.out.println("7. Modificar número");
-		System.out.println("8. Ver datos de espectáculo completo");
-		System.out.println("9. Ver ficha");
-		System.out.println("10. Log out");
-		System.out.println("11. Salir");
+		System.out.println("6. Ver datos de espectáculo completo");
+		System.out.println("7. Ver ficha");
+		System.out.println("8. Log out");
+		System.out.println("9. Salir");
 		System.out.println();
 		String entrada = sc.nextLine().trim();
 
