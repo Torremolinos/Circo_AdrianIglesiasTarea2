@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +21,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import dao.NumeroDAO;
 import utils.Config;
 
 public class PaisService {
@@ -26,6 +29,9 @@ public class PaisService {
 	private Map<String, String> mapaPaises;
 	private static final String rutaXml = new Config()
 					.getProperty("paisesruta");
+	private static final Logger LOGGER = Logger
+			.getLogger(PaisService.class.getName());
+
 
 	/**
 	 * Al instanciar nuestro service ya creamos los paises
@@ -64,7 +70,7 @@ public class PaisService {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Error al leerPaises", e);
 		}
 
 		return mapa;

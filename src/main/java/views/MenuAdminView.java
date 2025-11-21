@@ -14,15 +14,15 @@ import entidades.Sesion;
 import service.CredencialesService;
 import service.EspectaculoService;
 
-public class MenuAdmin {
+public class MenuAdminView {
 
 	Sesion sesion;
 	private final Scanner sc = new Scanner(System.in);
 
 	/**
-	 * Este metodo gestiona el menuAdmin, dandonos acceso a las diferentes acciones
-	 * o funcionalidades que puede acceder el admin. Tambien hay partes del menu en
-	 * construccion a futuras mejoras.
+	 * Este metodo gestiona el menuAdmin, dandonos acceso a las diferentes
+	 * acciones o funcionalidades que puede acceder el admin. Tambien hay partes
+	 * del menu en construccion a futuras mejoras.
 	 * 
 	 * @return
 	 */
@@ -30,17 +30,19 @@ public class MenuAdmin {
 		System.out.println();
 		System.out.println("\n===(͠≖ ͜ʖ͠≖) MENÚ " + perfiles + " (͠≖ ͜ʖ͠≖)===");
 		System.out.println("🎪 Bienvenido " + perfiles);
-		System.out.println("Tienes que elegir una de las opciones para continuar : ");
+		System.out.println(
+				"Tienes que elegir una de las opciones para continuar : ");
 		System.out.println("1. Ver espectáculos");
 		System.out.println("2. Registrar usuarios");
-		System.out.println("3. Crear espectáculos");
-		System.out.println("4. Modificar espectáculos");
-		System.out.println("5. Asignar perfil y credenciales");
-		System.out.println("6. Gestionar datos de Artistas y de Coordinación");
-		System.out.println("7. Ver datos de espectáculo completo");
-		System.out.println("8. Ver ficha");
-		System.out.println("9. Log out");
-		System.out.println("10. Salir");
+		System.out.println("3. Modificar perfil y credenciales");
+		System.out.println("4. Crear espectáculos");
+		System.out.println("5. Modificar espectáculos");
+		System.out.println("6. Crear número");
+		System.out.println("7. Modificar número");
+		System.out.println("8. Ver datos de espectáculo completo");
+		System.out.println("9. Ver ficha");
+		System.out.println("10. Log out");
+		System.out.println("11. Salir");
 		System.out.println();
 		String entrada = sc.nextLine().trim();
 

@@ -8,6 +8,6 @@
 
 package views;
 
-public class MenuArtista {
+public class MenuArtistaView {
 
 }

@@ -2,7 +2,7 @@ package views;
 
 import java.util.Scanner;
 
-public class MenuCredenciales {
+public class MenuCredencialesView {
 
 	public String nombreUsuario() {
 		Scanner sc = new Scanner(System.in);

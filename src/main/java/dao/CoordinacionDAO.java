@@ -86,9 +86,9 @@ public class CoordinacionDAO {
 		return null;
 	}
 
-	
 	/***
 	 * Metodo para buscar coordinacion por id del mismo
+	 * 
 	 * @param idCoordinacion
 	 * @return Coordinacion
 	 */
@@ -126,6 +126,14 @@ public class CoordinacionDAO {
 		return null;
 	}
 
+	/***
+	 * Metodo para actualizar coordinacion con los parametros que nos llegan
+	 * 
+	 * @param idPersona
+	 * @param senior
+	 * @param fechaSenior
+	 * @return
+	 */
 	public boolean actualizarCoordinacion(Long idPersona, Boolean senior,
 			LocalDate fechaSenior) {
 
@@ -147,5 +155,7 @@ public class CoordinacionDAO {
 
 		return false;
 	}
+	
+	
 
 }

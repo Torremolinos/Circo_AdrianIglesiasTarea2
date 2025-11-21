@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 import entidades.Perfiles;
 
-public class MenuInvitado {
+public class MenuInvitadoView {
 
 	private final Scanner sc = new Scanner(System.in);
 

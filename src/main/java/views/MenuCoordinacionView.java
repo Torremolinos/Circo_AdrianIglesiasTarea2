@@ -8,6 +8,6 @@
 
 package views;
 
-public class MenuCoordinacion {
+public class MenuCoordinacionView {
 
 }

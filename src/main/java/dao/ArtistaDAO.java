@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import entidades.Artista;
 import utils.DatabaseConnection;
+import utils.EspecialidadesAdapter;
 
 public class ArtistaDAO {
 
@@ -30,19 +31,22 @@ public class ArtistaDAO {
 	/***
 	 * Metodo para registrar el artista agregando el apodo y asignado al
 	 * id_persona correspondiente
-	 * 
+	 *
 	 * @param apodo
+	 * @param especialidad
 	 * @param id_persona
 	 * @return
 	 */
-	public boolean registrarArtista(String apodo, Long id_persona) {
+	public boolean registrarArtista(String apodo, String especialidad,
+			Long id_persona) {
 
-		String sql = "INSERT INTO artista (apodo, id_persona) VALUES (?, ?)";
+		String sql = "INSERT INTO artista (apodo, especialidad, id_persona) VALUES (?, ?, ?)";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
 			ps.setString(1, apodo);
-			ps.setLong(2, id_persona);
+			ps.setString(2, especialidad);
+			ps.setLong(3, id_persona);
 
 			int filas = ps.executeUpdate();
 			return filas > 0;
@@ -57,61 +61,67 @@ public class ArtistaDAO {
 	/***
 	 * Metodo para buscar el id de la persona en artista y traer asi los datos
 	 * del artista al completo.
-	 * 
+	 *
 	 * @param idPersona
 	 * @return
 	 */
 
 	public Artista buscarPorIdPersona(Long idPersona) {
-
 		String sql = "SELECT * FROM artista WHERE id_persona = ?";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-
 			ps.setLong(1, idPersona);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					Artista artista = new Artista();
-					artista.setIdArt(rs.getLong("id"));
-					artista.setApodo(rs.getString("apodo"));
-					artista.setId_persona(rs.getLong("id_persona"));
-					return artista;
+					Artista a = new Artista();
+					a.setIdArt(rs.getLong("id"));
+					a.setApodo(rs.getString("apodo"));
+
+					String especialidadesTexto = rs.getString("especialidad");
+
+					a.setEspecialidades(EspecialidadesAdapter
+							.stringALista(especialidadesTexto));
+
+					a.setId_persona(idPersona);
+
+					return a;
 				}
 			}
 
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al buscar artista por id_persona",
-					e);
+			LOGGER.log(Level.SEVERE, "Error buscando artista", e);
 		}
 
 		return null;
 	}
 
 	/***
-	 * Metodo para actualizar artista pasando los parametros idPersona y el
-	 * apodo nuevo si quisiera actualizarlo.
-	 * 
+	 * Metodo para actualizar artista pasando los parametros idPersona, apodo y
+	 * especialidades (texto "ACROBACIA,MAGIA")
+	 *
 	 * @param idPersona
-	 * @param nuevoApodo
+	 * @param apodo
+	 * @param especialidades
 	 * @return
 	 */
-	public boolean actualizarArtista(Long idPersona, String nuevoApodo) {
+	public boolean actualizarArtista(Long idPersona, String apodo,
+			String especialidades) {
 
-		String sql = "UPDATE artista SET apodo = ? WHERE id_persona = ?";
+		String sql = "UPDATE artista SET apodo = ?, especialidad = ? WHERE id_persona = ?";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
-			ps.setString(1, nuevoApodo);
-			ps.setLong(2, idPersona);
+			ps.setString(1, apodo);
+			ps.setString(2, especialidades);
+			ps.setLong(3, idPersona);
 
 			int filas = ps.executeUpdate();
 			return filas > 0;
 
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Error al actualizar artista", e);
+			LOGGER.log(Level.SEVERE, "Error actualizando artista", e);
+			return false;
 		}
-
-		return false;
 	}
 }

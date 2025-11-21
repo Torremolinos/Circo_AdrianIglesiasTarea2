@@ -1,5 +1,5 @@
 package views;
 
-public class MenuNumero {
+public class MenuNumeroView {
 
 }

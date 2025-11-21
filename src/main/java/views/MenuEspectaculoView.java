@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 
 import entidades.Espectaculo;
 
-public class MenuEspectaculo {
+public class MenuEspectaculoView {
 
 	public void mostrarEspectaculos(LinkedHashSet<Espectaculo> espectaculos) {
 		System.out.println("📜 Lista de espectáculos disponibles:");
