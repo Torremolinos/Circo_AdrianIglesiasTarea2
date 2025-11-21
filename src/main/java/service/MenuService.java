@@ -7,12 +7,15 @@
 
 package service;
 
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 
 import entidades.Sesion;
 import views.MenuAdmin;
+import views.MenuEspectaculo;
 import views.MenuInvitado;
 import entidades.Credenciales;
+import entidades.Espectaculo;
 import entidades.Perfiles;
 
 public class MenuService {
@@ -94,7 +97,8 @@ public class MenuService {
 	    EspectaculoService espectaculoService = new EspectaculoService();
 	    RegistroUsuarioService registroService = new RegistroUsuarioService();
 	    MenuAdmin menuAdminVista = new MenuAdmin();
-
+	    MenuEspectaculo menuEspectaculo = new MenuEspectaculo();
+	    LinkedHashSet<Espectaculo> espectaculos = espectaculoService.mostrarInformeBasico();
 	    boolean seguirEnPrograma = true;
 	    boolean seguirEnMenu = true;
 
@@ -104,7 +108,7 @@ public class MenuService {
 
 	        switch (eleccion) {
 	        case 1:
-	            espectaculoService.mostrarInformeBasico();
+	            menuEspectaculo.mostrarEspectaculos(espectaculos);
 	            break;
 
 	        case 2:

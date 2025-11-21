@@ -102,5 +102,89 @@ public class CredencialesDAO {
 
 		return false;
 	}
+	
+	/**
+     * Comprueba si ya existe un nombre de usuario.
+     */
+    public boolean existeNombreUsuario(String nombreUsuario) {
 
+        String sql = "SELECT 1 FROM credenciales WHERE nombre = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, nombreUsuario.toLowerCase());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // hay al menos un registro
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Error al comprobar nombre de usuario existente", e);
+        }
+
+        return false;
+    }
+
+    /**
+     * Recupera las credenciales asociadas a una persona.
+     */
+    public Credenciales buscarPorIdPersona(Long idPersona) {
+
+        String sql = "SELECT * FROM credenciales WHERE id_persona = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setLong(1, idPersona);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Credenciales c = new Credenciales();
+                    c.setId(rs.getLong("id"));
+                    c.setNombre(rs.getString("nombre"));
+                    c.setPassword(rs.getString("password"));
+                    c.setId_persona(rs.getLong("id_persona"));
+                    c.setPerfil(Perfiles.valueOf(rs.getString("perfiles")));
+                    return c;
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Error al buscar credenciales por id_persona", e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Actualiza usuario, password y perfil de una persona.
+     * 
+     */
+    public boolean actualizarCredenciales(Long idPersona,
+                                          String nuevoNombre,
+                                          String nuevaPassword,
+                                          Perfiles nuevoPerfil) {
+
+        String sql = "UPDATE credenciales "
+                   + "SET nombre = ?, password = ?, perfiles = ? "
+                   + "WHERE id_persona = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, nuevoNombre.toLowerCase());
+            ps.setString(2, nuevaPassword);
+            ps.setString(3, nuevoPerfil.name());
+            ps.setLong(4, idPersona);
+
+            int filas = ps.executeUpdate();
+            return filas > 0;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Error al actualizar credenciales", e);
+        }
+
+        return false;
+    }
 }

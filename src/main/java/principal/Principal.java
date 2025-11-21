@@ -19,14 +19,14 @@ public class Principal {
 
 	public static void main(String[] args) {
 
-	/*	MenuService menuService = new MenuService();
-		menuService.iniciarAplicacion();*/
+		MenuService menuService = new MenuService();
+		menuService.iniciarAplicacion();
 		
 		
 		
 		
 		
-		CredencialesDAO credenecialesdao = new CredencialesDAO();
+		/*CredencialesDAO credenecialesdao = new CredencialesDAO();
 		
 		String nombre = "adri";
 		String password = "1234";
@@ -40,7 +40,7 @@ public class Principal {
 		String pass = "1234";
 		Perfiles perfil = Perfiles.ARTISTA;
 		Long idpersonaasingada = 12l;
-		credenecialesdao.registrarNuevaCredencial(nombrePrueba,pass,idpersonaasingada,perfil);
+		credenecialesdao.registrarNuevaCredencial(nombrePrueba,pass,idpersonaasingada,perfil);*/
 		
 		
 		/*  PersonaDAO personaDAO = new PersonaDAO();

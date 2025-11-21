@@ -92,18 +92,11 @@ public class EspectaculoService {
 	 * 
 	 * 
 	 */
-	public void mostrarInformeBasico() {
-		EspectaculoDAO dao = new EspectaculoDAO();
-		LinkedHashSet<Espectaculo> espectaculos = new LinkedHashSet<Espectaculo>();
-		espectaculos = dao.listaEspectaculos();
-		if (espectaculos.isEmpty()) {
-			System.out.println("No hay espectáculos para mostrar.");
-			return;
-		}
-		for (Espectaculo e : espectaculos) {
-			System.out.println(e.getId() + " - " + e.getNombre() + " ("
-					+ e.getFechaini() + " a " + e.getFechafin() + ")");
-		}
+	public LinkedHashSet<Espectaculo> mostrarInformeBasico() {
+        EspectaculoDAO dao = new EspectaculoDAO();
+        LinkedHashSet<Espectaculo> espectaculos = dao.listaEspectaculos();
+        return espectaculos;
+    }
 
 		/*
 		 * switch (perfil) { case INVITADO:
@@ -133,7 +126,7 @@ public class EspectaculoService {
 		 * e.getFechafin()); System.out.println(); } break; default: break; }
 		 */
 
-	}
+	
 
 	/**
 	 * Creamos un espectaculo, adecuado al perfil que pasa por parametros luego

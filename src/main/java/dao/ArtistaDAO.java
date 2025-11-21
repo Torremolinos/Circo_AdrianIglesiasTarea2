@@ -73,7 +73,7 @@ public class ArtistaDAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					Artista artista = new Artista();
-					artista.setIdArt(rs.getLong("idart"));
+					artista.setIdArt(rs.getLong("id"));
 					artista.setApodo(rs.getString("apodo"));
 					artista.setId_persona(rs.getLong("id_persona"));
 					return artista;

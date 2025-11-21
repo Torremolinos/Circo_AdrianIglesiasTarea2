@@ -183,4 +183,24 @@ public class PersonaDAO {
 
 		return false;
 	}
+	
+
+	public boolean existeEmail(String email) {
+	    String sql = "SELECT 1 FROM persona WHERE email = ?";
+
+	    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+	        ps.setString(1, email);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            return rs.next();
+	        }
+
+	    } catch (SQLException e) {
+	        LOGGER.log(Level.SEVERE, "Error al comprobar email existente", e);
+	    }
+
+	    return false;
+	}
+
 }
